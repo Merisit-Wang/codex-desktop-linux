@@ -15,6 +15,9 @@ import { ChatPage } from "./components/ChatPage.jsx";
 import { ModeToggle, TerminalPanel, DiffCard } from "./components/Agent.jsx";
 import { FormControls, EmojiPicker, DatePickerPanel } from "./components/Forms.jsx";
 import { WorktreeDropdown, EditorTabs, BrowserPanel } from "./components/Panels.jsx";
+import {
+  WorkspaceSelectPage, WorkspaceRootDialog, FileTreePane, ProjectChip,
+} from "./components/Workspace.jsx";
 import { BackIcon, SunIcon, MoonIcon } from "./icons.jsx";
 
 const registry = [
@@ -287,6 +290,50 @@ const registry = [
       "视口内容的灰块卡片复用 secondary 背景令牌",
     ],
     render: () => <BrowserPanel />,
+  },
+  {
+    id: "wsselect",
+    name: "工作区选择页 Workspace Select",
+    desc: "Agent 启动屏：选择文件夹 + 最近打开列表（对应 select-workspace-page）",
+    notes: [
+      "居中卡片：大圆角图标块 + 20px 标题 + 一句话说明 + 主按钮",
+      "最近项 = 等宽字体路径 + 右侧时间戳（时钟小图标）",
+      "整页用 surface 背景与主窗口分层",
+    ],
+    render: () => <WorkspaceSelectPage />,
+    wide: true,
+  },
+  {
+    id: "wsroot",
+    name: "目录选择弹窗 Workspace Root",
+    desc: "面包屑 + 目录列表的文件夹选择对话框（remote-workspace-root-dialog）",
+    notes: [
+      "面包屑是等宽字体胶囊，当前段加粗",
+      "目录行右侧 chevron 仅 40% 透明度，hover 整行才强调",
+      "底部按钮右对齐：tertiary 取消 + primary 确认",
+    ],
+    render: () => <WorkspaceRootDialog />,
+  },
+  {
+    id: "filetree",
+    name: "文件树 File Tree",
+    desc: "变更审查侧栏：缩进层级 + Git 状态标记（review-file-tree-pane）",
+    notes: [
+      "缩进 16px/级，目录用 chevron 开合，文件用 13px 占位对齐",
+      "Git 状态单字母着色：M 橙 / A 绿 / D 红，10px 粗体",
+      "头部计数是 secondary 底色的数字 pill",
+    ],
+    render: () => <FileTreePane />,
+  },
+  {
+    id: "projchip",
+    name: "项目芯片 Project Chip",
+    desc: "输入框工具条上的当前目录标识（composer-project-selector）",
+    notes: [
+      "12.5px 小胶囊：文件夹图标 + 目录名 + chevron",
+      "secondary 背景，与 Composer 工具条的其他 icon-btn 区分层级",
+    ],
+    render: () => <ProjectChip />,
   },
 ];
 

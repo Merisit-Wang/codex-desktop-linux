@@ -1153,6 +1153,196 @@ code {
   background: var(--app-color-background-button-secondary);
 }
 
+/* ---------- workspace select page ---------- */
+.ws-page {
+  width: 100%;
+  min-height: 460px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--app-color-border);
+  background: var(--app-color-background-surface);
+  padding: 24px;
+}
+.ws-card {
+  width: min(400px, 100%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.ws-logo {
+  display: inline-flex;
+  padding: 14px;
+  border-radius: 16px;
+  background: var(--app-color-background-button-secondary);
+  margin-bottom: 16px;
+}
+.ws-title { font-size: 20px; font-weight: 600; margin: 0 0 6px; }
+.ws-sub {
+  font-size: 13px;
+  color: var(--app-color-text-foreground-secondary);
+  margin: 0 0 20px;
+}
+.ws-open { display: inline-flex; align-items: center; gap: 6px; }
+.ws-recent-label {
+  align-self: flex-start;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--app-color-text-foreground-secondary);
+  margin: 24px 0 6px;
+}
+.ws-recent { width: 100%; display: flex; flex-direction: column; gap: 2px; }
+.ws-recent-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: inherit;
+  font-size: 13px;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+.ws-recent-item:hover { background: var(--app-color-background-button-tertiary-hover); }
+.ws-recent-item .icon { opacity: 0.6; flex: none; }
+.ws-path {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 12.5px;
+}
+.ws-when {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--app-color-text-foreground-secondary);
+  flex: none;
+}
+
+/* ---------- workspace root dialog ---------- */
+.ws-crumb {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 16px 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--app-color-background-button-secondary);
+  font-size: 12px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--app-color-text-foreground-secondary);
+}
+.ws-crumb-cur { color: var(--app-color-text-foreground); font-weight: 600; }
+.ws-dirlist {
+  margin: 0 8px;
+  max-height: 220px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+.ws-dir-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font: inherit;
+  font-size: 13.5px;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+  border-radius: 8px;
+  padding: 8px 10px;
+  cursor: pointer;
+  text-align: left;
+}
+.ws-dir-item:hover { background: var(--app-color-background-button-tertiary-hover); }
+.ws-dir-item .icon:first-child { opacity: 0.7; }
+.ws-dir-go { margin-left: auto; opacity: 0.4; }
+.ws-dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 12px 16px 16px;
+}
+
+/* ---------- file tree pane ---------- */
+.ftree {
+  width: 280px;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  background: var(--app-color-background-surface);
+  padding: 6px;
+  font-size: 13px;
+}
+.ftree-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--app-color-text-foreground-secondary);
+  padding: 6px 8px;
+}
+.ftree-count {
+  background: var(--app-color-background-button-secondary-active);
+  border-radius: 999px;
+  padding: 1px 7px;
+  font-size: 11px;
+}
+.ftree-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  font: inherit;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+  border-radius: 7px;
+  padding: 5px 8px;
+  cursor: pointer;
+  text-align: left;
+}
+.ftree-item:hover { background: var(--app-color-background-button-tertiary-hover); }
+.ftree-item.active { background: var(--app-color-background-button-secondary-hover); }
+.ftree-item .icon { opacity: 0.65; flex: none; }
+.ftree-name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ftree-status {
+  font-size: 10px;
+  font-weight: 700;
+  width: 16px;
+  text-align: center;
+  flex: none;
+}
+.ftree-M { color: var(--orange-500); }
+.ftree-A { color: var(--green-500); }
+.ftree-D { color: var(--red-500); }
+
+/* ---------- composer project chip ---------- */
+.proj-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background: var(--app-color-background-button-secondary);
+  color: var(--app-color-text-foreground);
+}
+.proj-chip:hover { background: var(--app-color-background-button-secondary-hover); }
+
 /* ---------- shimmer ---------- */.shimmer-text {
   font-size: 15px;
   font-weight: 500;
