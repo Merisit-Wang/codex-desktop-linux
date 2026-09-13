@@ -20,7 +20,7 @@ export function CodeBlock() {
           {"  "}<span className="tok-k">return</span>{" "}
           <span className="tok-p">&lt;button</span>{" "}
           <span className="tok-a">className</span>=
-          <span className="tok-s">{`{\\\`btn btn-\\${variant}\\\`}`}</span>
+          <span className="tok-s">{'{`btn btn-${variant}`}'}</span>
           <span className="tok-p">/&gt;</span>;{"\n"}
           {"}"}{"\n"}
           <span className="tok-c">{"// 令牌驱动的样式，自动适配明暗主题"}</span>
