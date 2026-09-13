@@ -20,6 +20,7 @@
 
 | 目录 | 内容 |
 |---|---|
+| `CONTINUITY.md` | ⭐ **交接文档**：换环境继续研究的全部上下文（从这里读起） |
 | `upstream-ui/` | 官方包的验证下载、解包产物（本地生成，不入库）、设计令牌提取 |
 | `ui-lab/` | 用 React 19 + 提取的设计令牌**手写复现**的组件示例库 |
 | `codex-rebuild-linux-notes.md` | 阶段记录：在 Linux 跑通 Codex 桌面版（Rebuild）的 11 项修复全记录 |
