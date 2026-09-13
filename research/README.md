@@ -126,9 +126,9 @@ grep '你找到的token名' research/ui-lab/src/tokens.css
 
 | 组件 | 关键词 | 研究价值 |
 |---|---|---|
-| 代码块 | `chatgpt-code-block` | 语法高亮主题、复制按钮、圆角与边框处理 |
-| 设置弹窗 | `settings-dialog` / `*-modal-*` | 弹窗层级、遮罩、表单控件体系 |
+| ~~代码块~~ ✅ 已复现 | `chatgpt-code-block` | 语法高亮主题、复制按钮、圆角与边框处理 |
+| ~~设置弹窗~~ ✅ 已复现 | `dialog` | 弹窗层级、遮罩、Toggle 开关 |
+| ~~通知 Toast~~ ✅ 已复现 | `toast` | 反色胶囊 + 行内操作 |
 | 头像/账户菜单 | `avatar-*` | 菜单定位、头像徽章 |
 | 流式打字光标 | `streaming` / `result-streaming` | 动效实现方式 |
 | 引用/来源卡片 | `sources` / `citation` | 卡片式信息展示 |
-| 通知 Toast | `toast` / `notification` | 进场/退场动画 |

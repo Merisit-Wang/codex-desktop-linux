@@ -23,6 +23,15 @@ code {
   padding: 0.1em 0.35em;
 }
 
+/* Dark-theme correction (documented discrepancy): the upstream main bundle
+ * resolves --app-color-background/text-button-primary to gray-fixed-1000 on
+ * BOTH slots in dark mode (dark-on-dark). The shipping UI renders a light
+ * circle with a dark glyph in dark mode, so we mirror the observed result. */
+[data-theme="dark"] {
+  --app-color-background-button-primary: var(--gray-fixed-0);
+  --app-color-text-button-primary: var(--gray-fixed-1000);
+}
+
 /* ---------- layout ---------- */
 .app { height: 100%; display: flex; flex-direction: column; }
 
@@ -350,8 +359,161 @@ code {
 }
 .tooltip-anchor:hover .tooltip { opacity: 1; }
 
-/* ---------- shimmer ---------- */
-.shimmer-text {
+/* ---------- code block ---------- */
+.codeblock {
+  margin: 0;
+  width: 100%;
+  max-width: 40rem;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--gray-50);
+  font-size: 13px;
+}
+.codeblock-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px 6px 14px;
+  border-bottom: 1px solid var(--app-color-border);
+  background: var(--app-color-background-button-secondary);
+}
+.codeblock-lang {
+  font-size: 12px;
+  color: var(--app-color-text-foreground-secondary);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.codeblock-copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12px;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground-secondary);
+  border-radius: 6px;
+  padding: 4px 8px;
+  cursor: pointer;
+}
+.codeblock-copy:hover {
+  background: var(--app-color-background-button-tertiary-hover);
+  color: var(--app-color-text-foreground);
+}
+.codeblock-body {
+  margin: 0;
+  padding: 14px 16px;
+  overflow-x: auto;
+  line-height: 1.6;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+}
+.codeblock-body code { background: none; padding: 0; font-size: inherit; }
+/* syntax colors: palette tokens read as accents in both themes */
+.tok-k { color: var(--purple-400); }
+.tok-f { color: var(--blue-400); }
+.tok-s { color: var(--green-500); }
+.tok-a { color: var(--orange-500); }
+.tok-p { color: var(--gray-600); }
+.tok-c { color: var(--gray-500); font-style: italic; }
+
+/* ---------- toggle ---------- */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+.toggle {
+  position: relative;
+  width: 38px;
+  height: 22px;
+  border: none;
+  border-radius: 999px;
+  background: var(--app-color-background-button-secondary-active);
+  cursor: pointer;
+  transition: background 0.2s ease;
+  flex: none;
+}
+.toggle.on { background: var(--app-color-background-button-primary); }
+.toggle-knob {
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  width: 18px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--gray-fixed-0);
+  box-shadow: 0 1px 3px rgb(0 0 0 / 0.25);
+  transition: transform 0.2s ease;
+}
+.toggle.on .toggle-knob {
+  transform: translateX(16px);
+  background: var(--app-color-text-button-primary);
+}
+[data-theme="dark"] .toggle.on .toggle-knob {
+  background: var(--gray-fixed-1000);
+}
+
+/* ---------- dialog / overlay ---------- */
+.overlay {
+  width: 100%;
+  min-height: 420px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: color-mix(in oklab, var(--gray-fixed-1000) 45%, transparent);
+  padding: 24px;
+}
+.dialog {
+  width: min(480px, 100%);
+  background: var(--app-color-background-elevated-primary-opaque);
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgb(0 0 0 / 0.2);
+  overflow: hidden;
+}
+.dialog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px 10px 20px;
+}
+.dialog-title { font-size: 16px; font-weight: 600; margin: 0; }
+.dialog-body { padding: 0 16px 16px; }
+.dialog-section {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--app-color-text-foreground-secondary);
+  padding: 12px 4px 2px;
+}
+
+/* ---------- toast ---------- */
+.toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  background: var(--app-color-text-foreground);
+  color: var(--app-color-background-elevated-primary-opaque);
+  font-size: 14px;
+  border-radius: 12px;
+  padding: 10px 16px;
+  box-shadow: 0 8px 24px rgb(0 0 0 / 0.25);
+}
+.toast-action {
+  font: inherit;
+  font-weight: 600;
+  border: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  padding: 0;
+  opacity: 0.8;
+}
+.toast-action:hover { opacity: 1; }
+
+/* ---------- shimmer ---------- */.shimmer-text {
   font-size: 15px;
   font-weight: 500;
   margin: 0;

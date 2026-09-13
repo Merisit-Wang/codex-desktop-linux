@@ -3,6 +3,8 @@ import { ButtonsDemo, Composer } from "./components/Buttons.jsx";
 import { MessagesDemo } from "./components/Messages.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
 import { ModelPill, TooltipDemo, ShimmerDemo } from "./components/Misc.jsx";
+import { CodeBlock, InlineCodeDemo } from "./components/CodeBlock.jsx";
+import { SettingsDialog, ToastDemo } from "./components/Overlays.jsx";
 import { BackIcon, SunIcon, MoonIcon } from "./icons.jsx";
 
 const registry = [
@@ -81,6 +83,43 @@ const registry = [
       "上游 index.html 启动屏也使用同样的 shimmer 变量",
     ],
     render: () => <ShimmerDemo />,
+  },
+  {
+    id: "codeblock",
+    name: "代码块 Code Block",
+    desc: "带语言栏与复制按钮的代码块，以及行内代码样式",
+    notes: [
+      "表面色用 --gray-50（亮 #f9f9f9 / 暗 #131313），1px 8% 边框，圆角 12px",
+      "头部行：语言名 12px 等宽 + 复制按钮（hover 才加深文字）",
+      "语法高亮直接取调色板 token（blue/green/orange/purple），双主题天然可读",
+    ],
+    render: () => (
+      <div className="demo-col" style={{ width: "100%", maxWidth: "40rem" }}>
+        <CodeBlock />
+        <InlineCodeDemo />
+      </div>
+    ),
+  },
+  {
+    id: "dialog",
+    name: "设置弹窗 Dialog",
+    desc: "模态弹窗 + 开关 Toggle（上游 dialog chunk 的布局规律）",
+    notes: [
+      "遮罩：color-mix(黑 45%, transparent)；面板 elevated 背景 + 16px 圆角 + 大阴影",
+      "上游 dialog 宽度用 min(spacing*180, 100vw - spacing*8)，小屏退化为全屏",
+      "Toggle：38×22 胶囊 + 18px 旋钮，开启态跟随主按钮色",
+    ],
+    render: () => <SettingsDialog />,
+  },
+  {
+    id: "toast",
+    name: "通知 Toast",
+    desc: "底部深色胶囊通知，可带撤销等行内操作",
+    notes: [
+      "反色设计：前景色做底、背景色做字（与 Tooltip 同一套反色语言）",
+      "圆角 12px，操作按钮仅靠字重区分",
+    ],
+    render: () => <ToastDemo />,
   },
 ];
 

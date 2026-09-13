@@ -31,6 +31,17 @@ npm run gen:tokens # 上游 CSS 更新后重新生成 tokens.css
 | Model Pill | 胶囊按钮 + elevated 下拉面板（16px 圆角、大阴影、双行菜单项） |
 | Tooltip | 反色 12px 小胶囊 |
 | Shimmer | `background-clip: text` + 渐变扫过的"思考中"微光 |
+| Code Block | `--gray-50` 表面 + 语言栏/复制钮；语法色直接取调色板 token |
+| Dialog + Toggle | 遮罩 `color-mix(黑 45%)`、16px 圆角面板；38×22 开关 |
+| Toast | 反色胶囊（与 Tooltip 同一套反色语言） |
+
+## 已发现的上游问题（研究副产品）
+
+暗色主题下主 bundle 把 `--app-color-background-button-primary` 和
+`--app-color-text-button-primary` 同时解析为 `--gray-fixed-1000`（#0d0d0d，
+即"黑底黑字"）——与实际渲染（浅色圆钮 + 深色图标）不符，说明发送按钮
+实际由 Tailwind `dark:` 类覆盖而非该令牌。本实验在 `app.css` 中用一段
+带注释的 `[data-theme="dark"]` 覆盖修正为观察到的真实效果。
 
 ## 关键设计规律（从令牌中学到的）
 
