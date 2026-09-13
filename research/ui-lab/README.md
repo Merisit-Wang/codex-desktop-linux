@@ -43,6 +43,9 @@ npm run gen:tokens # 上游 CSS 更新后重新生成 tokens.css
 | Code Block | `--gray-50` 表面 + 语言栏/复制钮；语法色直接取调色板 token |
 | Dialog + Toggle | 遮罩 `color-mix(黑 45%)`、16px 圆角面板；38×22 开关 |
 | Toast | 反色胶囊（与 Tooltip 同一套反色语言） |
+| Account Menu | 渐变头像 + 状态角标；危险项用错误色文字而非红底 |
+| Streaming | 块状光标 steps(2) 闪烁；骨架屏复刻 steps(48) 2.6s 扫光 |
+| Sources | 10px 上标引用 pill + favicon 方块/两行截断的来源卡 |
 
 ## 已发现的上游问题（研究副产品）
 

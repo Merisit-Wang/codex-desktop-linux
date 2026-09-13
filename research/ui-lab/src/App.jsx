@@ -5,6 +5,12 @@ import { Sidebar } from "./components/Sidebar.jsx";
 import { ModelPill, TooltipDemo, ShimmerDemo } from "./components/Misc.jsx";
 import { CodeBlock, InlineCodeDemo } from "./components/CodeBlock.jsx";
 import { SettingsDialog, ToastDemo } from "./components/Overlays.jsx";
+import {
+  AccountMenu,
+  StreamingDemo,
+  SkeletonDemo,
+  SourcesDemo,
+} from "./components/Social.jsx";
 import { BackIcon, SunIcon, MoonIcon } from "./icons.jsx";
 
 const registry = [
@@ -120,6 +126,48 @@ const registry = [
       "圆角 12px，操作按钮仅靠字重区分",
     ],
     render: () => <ToastDemo />,
+  },
+  {
+    id: "account",
+    name: "账户菜单 Account Menu",
+    desc: "头像按钮（带状态角标）+ 账户下拉面板",
+    notes: [
+      "头像：32px 渐变圆 + 10px 状态点（2px 描边切出悬浮感）",
+      "面板头部是 40px 大头像 + 双行文字，复用 menu-panel 体系",
+      "危险项（退出登录）用 --app-color-text-error 而非红色背景",
+    ],
+    render: () => (
+      <div style={{ paddingBottom: 220 }}>
+        <AccountMenu />
+      </div>
+    ),
+  },
+  {
+    id: "streaming",
+    name: "流式输出 Streaming",
+    desc: "打字机效果的回答输出 + 块状闪烁光标",
+    notes: [
+      "光标：8px 宽圆角块，steps(2) 离散闪烁（0.9s 一周期）",
+      "输出完成光标即消失——上游同样是「生成中才显示光标」",
+      "下方骨架屏复刻上游 profile chunk 的技巧：steps(48,end) 2.6s 扫过 + background-attachment: fixed",
+    ],
+    render: () => (
+      <div className="demo-col" style={{ gap: 32 }}>
+        <StreamingDemo />
+        <SkeletonDemo />
+      </div>
+    ),
+  },
+  {
+    id: "sources",
+    name: "引用来源 Sources",
+    desc: "行内上标引用标记 + 来源卡片栅格",
+    notes: [
+      "引用标记：10px 超小 pill，super 上标对齐，hover 加深",
+      "来源卡：favicon 方块(16px, 4px 圆角) + 域名 11px + 标题两行截断",
+      "hover 时上浮 1px + 投影，与卡片区分开层级",
+    ],
+    render: () => <SourcesDemo />,
   },
 ];
 

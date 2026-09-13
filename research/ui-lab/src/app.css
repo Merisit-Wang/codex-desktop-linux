@@ -513,6 +513,155 @@ code {
 }
 .toast-action:hover { opacity: 1; }
 
+/* ---------- account menu / avatar ---------- */
+.account-wrap { position: relative; }
+.avatar-btn {
+  position: relative;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
+  border-radius: 999px;
+}
+.avatar-circle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  background: linear-gradient(135deg, var(--blue-400), var(--purple-400));
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+.avatar-lg { width: 40px; height: 40px; font-size: 16px; }
+.avatar-badge {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--green-400);
+  border: 2px solid var(--app-color-background-elevated-primary-opaque);
+}
+.account-panel { left: auto; right: 0; min-width: 280px; }
+.account-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+.account-panel .menu-item { justify-content: flex-start; gap: 10px; }
+.account-panel .menu-item .icon { opacity: 0.7; }
+.menu-item-danger,
+.menu-item-danger .menu-item-title { color: var(--app-color-text-error); }
+
+/* ---------- streaming ---------- */
+.stream-cursor {
+  display: inline-block;
+  width: 8px;
+  height: 1.05em;
+  margin-left: 2px;
+  border-radius: 2px;
+  background: var(--app-color-text-foreground);
+  vertical-align: text-bottom;
+  animation: cursor-blink 0.9s steps(2, start) infinite;
+}
+@keyframes cursor-blink {
+  to { visibility: hidden; }
+}
+
+/* ---------- skeleton (upstream profile chunk: steps(48) sweep) ---------- */
+.skeleton {
+  border-radius: 6px;
+  background-color: var(--app-color-background-button-secondary);
+  background-image: linear-gradient(
+    90deg,
+    transparent 34%,
+    color-mix(in oklab, var(--app-color-text-foreground) 10%, transparent) 50%,
+    transparent 66%
+  );
+  background-position: -100vw 0;
+  background-repeat: no-repeat;
+  background-size: 100vw 100%;
+  background-attachment: fixed;
+  animation: skeleton-sweep 2.6s steps(48, end) infinite;
+}
+@keyframes skeleton-sweep {
+  to { background-position: 100vw 0; }
+}
+
+/* ---------- sources / citations ---------- */
+.sources-wrap { max-width: 40rem; width: 100%; }
+.cite {
+  font: inherit;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 1;
+  vertical-align: super;
+  margin: 0 1px;
+  padding: 2px 5px;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  background: var(--app-color-background-button-secondary);
+  color: var(--app-color-text-foreground-secondary);
+}
+.cite:hover {
+  background: var(--app-color-background-button-secondary-active);
+  color: var(--app-color-text-foreground);
+}
+.sources-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.source-card {
+  display: block;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  padding: 10px 12px;
+  text-decoration: none;
+  color: var(--app-color-text-foreground);
+  background: var(--app-color-background-elevated-primary-opaque);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+}
+.source-card:hover {
+  box-shadow: 0 4px 14px color-mix(in oklab, var(--alpha-base) 10%, transparent);
+  transform: translateY(-1px);
+}
+.source-site { display: flex; align-items: center; gap: 6px; margin-bottom: 6px; }
+.source-favicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--app-color-background-button-secondary-active);
+  color: var(--app-color-text-foreground-secondary);
+  font-size: 10px;
+  font-weight: 700;
+  flex: none;
+}
+.source-domain {
+  font-size: 11px;
+  color: var(--app-color-text-foreground-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.source-title {
+  font-size: 12px;
+  line-height: 1.4;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
 /* ---------- shimmer ---------- */.shimmer-text {
   font-size: 15px;
   font-weight: 500;

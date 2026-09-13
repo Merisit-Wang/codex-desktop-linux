@@ -129,6 +129,6 @@ grep '你找到的token名' research/ui-lab/src/tokens.css
 | ~~代码块~~ ✅ 已复现 | `chatgpt-code-block` | 语法高亮主题、复制按钮、圆角与边框处理 |
 | ~~设置弹窗~~ ✅ 已复现 | `dialog` | 弹窗层级、遮罩、Toggle 开关 |
 | ~~通知 Toast~~ ✅ 已复现 | `toast` | 反色胶囊 + 行内操作 |
-| 头像/账户菜单 | `avatar-*` | 菜单定位、头像徽章 |
-| 流式打字光标 | `streaming` / `result-streaming` | 动效实现方式 |
-| 引用/来源卡片 | `sources` / `citation` | 卡片式信息展示 |
+| ~~头像/账户菜单~~ ✅ 已复现 | `avatar-*` / `profile` | 玻璃拟态、角标、骨架屏 steps(48) 扫光 |
+| ~~流式打字光标~~ ✅ 已复现 | `streaming` | 块状光标、生成中才显示 |
+| ~~引用/来源卡片~~ ✅ 已复现 | `chatgpt-sources-*` | 上标引用 + 卡片栅格 |
