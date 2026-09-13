@@ -1,0 +1,49 @@
+# UI Lab — 上游组件样式复现实验
+
+实验性项目：基于从上游官方包提取的 **421 个设计令牌**（`src/tokens.css`，
+由 `scripts/gen-tokens.mjs` 从 `../upstream-ui/readable/css/` 解析生成），
+用 React 19 手写复现聊天应用的核心组件样式。**仅用于个人学习研究**，
+不复刻上游代码，组件均为按令牌规范重新实现。
+
+## 运行
+
+```bash
+npm install        # 首次（需要网络）
+npm run dev        # http://127.0.0.1:5179
+npm run build      # 产物到 dist/
+npm run gen:tokens # 上游 CSS 更新后重新生成 tokens.css
+```
+
+## 页面
+
+- **首页**：组件卡片选择页
+- **详情页**：舞台预览 + "观察要点"（该组件用到的令牌与样式规律）
+- 右上角可随时切换 明/暗 主题（`data-theme` 属性，令牌全部自动翻转）
+
+## 已复现组件
+
+| 组件 | 复现要点 |
+|---|---|
+| Buttons | primary/secondary/tertiary/danger；hover 用 `color-mix(前景色 x%, transparent)` 而非固定灰 |
+| Composer | 28px 大圆角容器、聚焦边框加深、实心圆形发送钮 |
+| Messages | 用户右对齐灰底气泡；助手无气泡 + 16px 小图标操作行 |
+| Sidebar | 比主区深半档的背景、8px 圆角列表项、透明混合 hover |
+| Model Pill | 胶囊按钮 + elevated 下拉面板（16px 圆角、大阴影、双行菜单项） |
+| Tooltip | 反色 12px 小胶囊 |
+| Shimmer | `background-clip: text` + 渐变扫过的"思考中"微光 |
+
+## 关键设计规律（从令牌中学到的）
+
+1. **不设死色值**：交互态颜色 = `color-mix(in oklab, 前景色 5~24%, transparent)`，明暗主题自动协调
+2. **灰阶翻转**：`--gray-N` 在暗主题下整列反转（gray-0 亮主题 `#fff` ↔ 暗主题 `#0d0d0d`），组件写 `var(--gray-100)` 即可双主题适配
+3. **层级靠透明叠加**：elevated 背景是 `color-mix(白色 70%/96%, transparent)` 叠出来的，而非独立色板
+
+## 目录
+
+```
+src/tokens.css        生成的设计令牌（light/dark 两组具体值）
+src/icons.jsx         手绘 24px 描边图标
+src/components/       复现的组件（Buttons/Messages/Sidebar/Misc）
+src/App.jsx           组件注册表 + 首页/详情页/主题切换
+scripts/gen-tokens.mjs  令牌解析器（lightningcss 嵌套 var() → 具体值）
+```

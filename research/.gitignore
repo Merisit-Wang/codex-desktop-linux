@@ -1,0 +1,16 @@
+# 研究分支的排除规则：重型产物与上游版权内容不入库
+
+# 上游包与解包产物（体积大 + OpenAI 版权内容，本地用 README 里的命令重新生成）
+upstream-ui/deb/
+upstream-ui/extracted/
+upstream-ui/asar/
+upstream-ui/.gnupg/
+upstream-ui/.npm-cache/
+# 上游 CSS 的美化副本（逐字代码，不再分发；design-tokens.txt 保留，
+# 它是令牌名/色值的事实性数据表）
+upstream-ui/readable/css/
+
+# Node 构建产物
+ui-lab/node_modules/
+ui-lab/dist/
+ui-lab/.npm-cache/
