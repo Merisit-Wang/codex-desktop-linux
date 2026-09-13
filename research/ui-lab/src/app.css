@@ -832,6 +832,194 @@ code {
 .model-pill.open { background: var(--app-color-background-button-tertiary-hover); }
 .rotate-180 { transform: rotate(180deg); }
 
+/* ---------- form controls ---------- */
+.form {
+  width: 100%;
+  max-width: 26rem;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.form-field { display: flex; flex-direction: column; gap: 6px; }
+.form-label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--app-color-text-foreground);
+}
+.form-value { color: var(--app-color-text-foreground-secondary); font-weight: 400; }
+.form-input {
+  font: inherit;
+  font-size: 14px;
+  color: var(--app-color-text-foreground);
+  background: var(--app-color-background-elevated-primary-opaque);
+  border: 1px solid var(--app-color-border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  outline: none;
+  transition: border-color 0.15s ease;
+}
+.form-input:focus { border-color: var(--app-color-border-focus); }
+.form-select {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+  text-align: left;
+}
+/* slider — mirrors upstream input-selector: 24px track, white 20px thumb */
+.form-slider {
+  appearance: none;
+  -webkit-appearance: none;
+  height: 24px;
+  background: transparent;
+  cursor: pointer;
+}
+.form-slider::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--app-color-background-button-secondary-active);
+}
+.form-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 20px;
+  height: 20px;
+  margin-top: -7px;
+  border-radius: 999px;
+  background: var(--gray-fixed-0);
+  border: 1px solid rgb(0 0 0 / 0.1);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+}
+.form-slider::-moz-range-track {
+  height: 6px;
+  border-radius: 999px;
+  background: var(--app-color-background-button-secondary-active);
+}
+.form-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 999px;
+  background: var(--gray-fixed-0);
+  border: 1px solid rgb(0 0 0 / 0.1);
+  box-shadow: 0 1px 2px rgb(0 0 0 / 0.12);
+}
+.form-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  cursor: pointer;
+  user-select: none;
+}
+.checkbox, .radio {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  flex: none;
+  border: 1.5px solid var(--app-color-border-heavy);
+  color: var(--app-color-text-button-primary);
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 0.15s ease, border-color 0.15s ease;
+}
+.checkbox { border-radius: 5px; }
+.checkbox.on, .radio.on {
+  background: var(--app-color-background-button-primary);
+  border-color: var(--app-color-background-button-primary);
+}
+.radio { border-radius: 999px; }
+.radio.on { box-shadow: inset 0 0 0 3.5px var(--app-color-background-elevated-primary-opaque); }
+
+/* ---------- emoji picker (upstream themes emoji-picker-react via tokens) ---------- */
+.emoji-panel {
+  width: 320px;
+  background: var(--app-color-background-elevated-primary-opaque);
+  border: 1px solid var(--app-color-border);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px color-mix(in oklab, var(--alpha-base) 14%, transparent);
+  padding: 10px;
+}
+.emoji-search {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 8px;
+  background: var(--app-color-background-button-secondary);
+  color: var(--app-color-text-foreground-secondary);
+}
+.emoji-search input {
+  flex: 1;
+  font: inherit;
+  font-size: 13px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+}
+.emoji-grid {
+  display: grid;
+  grid-template-columns: repeat(8, 1fr);
+  gap: 2px;
+}
+.emoji-cell {
+  font-size: 20px;
+  line-height: 1;
+  padding: 6px 0;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+}
+.emoji-cell:hover { background: var(--app-color-background-button-tertiary-hover); }
+.emoji-cell.active { background: var(--app-color-background-button-secondary-active); }
+
+/* ---------- date picker (Radix popover, elevated surface + hairline) ---------- */
+.date-panel {
+  width: 300px;
+  background: var(--app-color-background-elevated-primary-opaque);
+  border: 1px solid var(--app-color-border);
+  border-radius: 16px;
+  box-shadow: 0 12px 32px color-mix(in oklab, var(--alpha-base) 14%, transparent);
+  padding: 12px;
+}
+.date-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.date-title { font-size: 14px; font-weight: 600; }
+.date-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+  text-align: center;
+}
+.date-week {
+  font-size: 11px;
+  color: var(--app-color-text-foreground-secondary);
+  padding: 4px 0;
+}
+.date-cell {
+  font: inherit;
+  font-size: 13px;
+  aspect-ratio: 1;
+  border: none;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+  cursor: pointer;
+}
+.date-cell:hover { background: var(--app-color-background-button-tertiary-hover); }
+.date-cell.today { box-shadow: inset 0 0 0 1px var(--app-color-border-focus); }
+.date-cell.active {
+  background: var(--app-color-background-button-primary);
+  color: var(--app-color-text-button-primary);
+}
+
 /* ---------- shimmer ---------- */.shimmer-text {
   font-size: 15px;
   font-weight: 500;

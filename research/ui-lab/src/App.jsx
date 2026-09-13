@@ -13,6 +13,7 @@ import {
 } from "./components/Social.jsx";
 import { ChatPage } from "./components/ChatPage.jsx";
 import { ModeToggle, TerminalPanel, DiffCard } from "./components/Agent.jsx";
+import { FormControls, EmojiPicker, DatePickerPanel } from "./components/Forms.jsx";
 import { BackIcon, SunIcon, MoonIcon } from "./icons.jsx";
 
 const registry = [
@@ -215,6 +216,39 @@ const registry = [
       "± 标记放独立 gutter 列，与代码对齐",
     ],
     render: () => <DiffCard />,
+  },
+  {
+    id: "forms",
+    name: "表单控件 Form Controls",
+    desc: "文本输入 / 下拉按钮 / 滑杆 / 复选框 / 单选（Agent 设置页基础）",
+    notes: [
+      "滑杆复刻上游 input-selector：24px 轨道区、白色 20px 圆形拇指 + 1px 边 + 投影",
+      "聚焦色走 --app-color-border-focus，不写死蓝色",
+      "选中态统一用主按钮色（亮主题黑、暗主题白），check 标记反色",
+    ],
+    render: () => <FormControls />,
+  },
+  {
+    id: "emojipicker",
+    name: "表情选择 Emoji Picker",
+    desc: "搜索框 + 8 列网格的表情弹层（消息反应/昵称常用）",
+    notes: [
+      "上游直接给 emoji-picker-react 换肤：背景/描边/hover 全映射到令牌",
+      "搜索框用次级背景胶囊，无独立边框",
+      "hover/focus 两态用 tertiary-hover 与 secondary-active 区分",
+    ],
+    render: () => <EmojiPicker />,
+  },
+  {
+    id: "datepicker",
+    name: "日期选择 Date Picker",
+    desc: "月份网格弹层：选中实心圆、今天描边圆（Radix Popover 模式）",
+    notes: [
+      "弹层三件套：elevated 背景 + hairline 边框 + 复合投影（上游 Popover 公式）",
+      "今天 = 1px 内描边，选中 = 主色实心圆，层级分明",
+      "cell 用 aspect-ratio:1 保持正圆",
+    ],
+    render: () => <DatePickerPanel />,
   },
 ];
 
