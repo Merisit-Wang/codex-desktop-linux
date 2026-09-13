@@ -1343,6 +1343,142 @@ code {
 }
 .proj-chip:hover { background: var(--app-color-background-button-secondary-hover); }
 
+/* ---------- worktrees settings ---------- */
+.wts-page {
+  width: 100%;
+  max-width: 34rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.wts-title { font-size: 16px; font-weight: 600; margin: 0; }
+.wts-sub {
+  font-size: 13px;
+  color: var(--app-color-text-foreground-secondary);
+  margin: 0 0 8px;
+  line-height: 1.5;
+}
+.wts-list { width: 100%; display: flex; flex-direction: column; gap: 2px; }
+.wts-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  background: var(--app-color-background-elevated-primary-opaque);
+}
+.wts-row > .icon { opacity: 0.7; flex: none; }
+.wts-info { flex: 1; min-width: 0; }
+.wts-name { font-size: 13.5px; font-weight: 500; display: flex; align-items: center; gap: 8px; }
+.wts-badge {
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 7px;
+  border-radius: 999px;
+  background: var(--app-color-background-button-secondary-active);
+  color: var(--app-color-text-foreground-secondary);
+}
+.wts-path {
+  font-size: 11.5px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  color: var(--app-color-text-foreground-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.wts-remove:hover { color: var(--app-color-text-error); }
+
+/* ---------- workspace warning empty state ---------- */
+.ws-warning {
+  width: 100%;
+  max-width: 26rem;
+  min-height: 280px;
+  border: 1px dashed var(--app-color-border-heavy);
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px;
+  gap: 8px;
+}
+.ws-warning-icon {
+  display: inline-flex;
+  padding: 12px;
+  border-radius: 999px;
+  background: var(--app-color-background-button-secondary);
+  color: var(--app-color-text-foreground-secondary);
+  margin-bottom: 4px;
+}
+.ws-warning-title { font-size: 15px; font-weight: 600; }
+.ws-warning-desc {
+  font-size: 13px;
+  color: var(--app-color-text-foreground-secondary);
+  line-height: 1.6;
+  margin: 0 0 8px;
+}
+
+/* ---------- onboarding banner ---------- */
+.ob-banner {
+  position: relative;
+  width: 100%;
+  max-width: 34rem;
+  display: flex;
+  gap: 14px;
+  padding: 16px;
+  border: 1px solid var(--app-color-border);
+  border-radius: 16px;
+  background: var(--app-color-background-elevated-primary-opaque);
+  box-shadow: 0 4px 16px color-mix(in oklab, var(--alpha-base) 8%, transparent);
+}
+.ob-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  flex: none;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(135deg, var(--blue-400), var(--purple-400));
+}
+.ob-body { flex: 1; min-width: 0; }
+.ob-title { font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.ob-desc {
+  font-size: 13px;
+  color: var(--app-color-text-foreground-secondary);
+  line-height: 1.5;
+  margin-bottom: 10px;
+}
+.ob-actions { display: flex; gap: 8px; }
+.ob-cta { padding: 6px 14px; font-size: 13px; }
+.ob-close { position: absolute; top: 10px; right: 10px; }
+
+/* ---------- file context menu ---------- */
+.ctx-menu { position: static; min-width: 220px; }
+.ctx-item { justify-content: flex-start; gap: 10px; font-size: 13.5px; }
+.ctx-item .icon { opacity: 0.65; flex: none; }
+
+/* ---------- switch workspace dialog ---------- */
+.space-row { cursor: pointer; }
+.space-row:hover { background: var(--app-color-background-button-tertiary-hover); }
+.space-row.active { border-color: var(--app-color-border-focus); }
+.space-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  flex: none;
+  border-radius: 8px;
+  background: var(--app-color-background-button-secondary-active);
+  font-size: 13px;
+  font-weight: 600;
+}
+
 /* ---------- shimmer ---------- */.shimmer-text {
   font-size: 15px;
   font-weight: 500;

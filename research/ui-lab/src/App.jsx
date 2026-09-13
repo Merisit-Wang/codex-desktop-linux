@@ -18,6 +18,10 @@ import { WorktreeDropdown, EditorTabs, BrowserPanel } from "./components/Panels.
 import {
   WorkspaceSelectPage, WorkspaceRootDialog, FileTreePane, ProjectChip,
 } from "./components/Workspace.jsx";
+import {
+  WorktreesSettings, WorkspaceWarning, OnboardingBanner,
+  FileContextMenu, SwitchWorkspaceDialog,
+} from "./components/Workspace2.jsx";
 import { BackIcon, SunIcon, MoonIcon } from "./icons.jsx";
 
 const registry = [
@@ -334,6 +338,61 @@ const registry = [
       "secondary 背景，与 Composer 工具条的其他 icon-btn 区分层级",
     ],
     render: () => <ProjectChip />,
+  },
+  {
+    id: "wtsettings",
+    name: "Worktree 设置 Worktrees Settings",
+    desc: "worktree 列表管理：当前标记、路径、删除操作（worktrees-settings-page）",
+    notes: [
+      "行式卡片：12px 圆角 + 1px 边框，图标 70% 透明度",
+      "「当前」是 secondary 底色的小 badge，不用彩色",
+      "删除钮 hover 才变错误色——危险动作不常驻红色",
+    ],
+    render: () => <WorktreesSettings />,
+  },
+  {
+    id: "wswarning",
+    name: "工作区警告空态 Warning State",
+    desc: "终端未关联工作区时的引导空态（terminal-workspace-warning-state）",
+    notes: [
+      "虚线边框容器 = 「待填充」的通用语言",
+      "三段式：圆形图标底 + 15px 标题 + 13px 描述 + secondary 按钮",
+      "空态不用大色块，全部中性色",
+    ],
+    render: () => <WorkspaceWarning />,
+  },
+  {
+    id: "onboarding",
+    name: "引导横幅 Onboarding Banner",
+    desc: "新功能引导卡：渐变图标 + 双按钮 + 角落关闭（worktree-onboarding-banner）",
+    notes: [
+      "唯一的彩色元素是 40px 渐变图标块——引导卡的焦点设计",
+      "CTA 用 13px 小号主按钮，次级动作仅 tertiary 文字钮",
+      "关闭钮绝对定位角落，不参与布局",
+    ],
+    render: () => <OnboardingBanner />,
+  },
+  {
+    id: "ctxmenu",
+    name: "文件右键菜单 Context Menu",
+    desc: "文件树右键操作菜单（workspace-file-context-menu）",
+    notes: [
+      "与下拉面板同体系但更窄（220px），项内图标 65% 透明度",
+      "分隔线把「查看 / 系统 / 危险」三组动作切开",
+      "危险项依旧只用错误色文字",
+    ],
+    render: () => <FileContextMenu />,
+  },
+  {
+    id: "switchspace",
+    name: "空间切换 Switch Workspace",
+    desc: "个人/团队空间切换弹窗：搜索 + 头像列表（business-switch-workspace-dialog）",
+    notes: [
+      "搜索框复用 emoji-search 的胶囊样式——组件内部复用",
+      "空间头像是 8px 圆角方块（区别于用户的圆形头像）",
+      "当前空间 = focus 色边框 + ✓，双重标记",
+    ],
+    render: () => <SwitchWorkspaceDialog />,
   },
 ];
 
