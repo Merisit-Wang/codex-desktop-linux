@@ -2,13 +2,19 @@ import { useEffect, useState } from "react";
 import { GearIcon, LogoutIcon, SparkleIcon, GlobeIcon } from "../icons.jsx";
 
 // ---- Account menu ----------------------------------------------------------
-export function AccountMenu() {
+export function AccountMenu({ open: initialOpen = true }) {
+  const [open, setOpen] = useState(initialOpen);
   return (
     <div className="account-wrap">
-      <button className="avatar-btn" aria-label="账户菜单">
+      <button
+        className="avatar-btn"
+        aria-label="账户菜单"
+        onClick={() => setOpen(!open)}
+      >
         <span className="avatar-circle">M</span>
         <span className="avatar-badge" />
       </button>
+      {open && (
       <div className="menu-panel account-panel">
         <div className="account-head">
           <span className="avatar-circle avatar-lg">M</span>
@@ -32,6 +38,7 @@ export function AccountMenu() {
           <span className="menu-item-title">退出登录</span>
         </div>
       </div>
+      )}
     </div>
   );
 }

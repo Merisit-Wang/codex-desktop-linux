@@ -11,6 +11,8 @@ import {
   SkeletonDemo,
   SourcesDemo,
 } from "./components/Social.jsx";
+import { ChatPage } from "./components/ChatPage.jsx";
+import { ModeToggle, TerminalPanel, DiffCard } from "./components/Agent.jsx";
 import { BackIcon, SunIcon, MoonIcon } from "./icons.jsx";
 
 const registry = [
@@ -169,6 +171,51 @@ const registry = [
     ],
     render: () => <SourcesDemo />,
   },
+  {
+    id: "chatpage",
+    name: "完整聊天页 Chat Page",
+    desc: "收官拼装：侧边栏 + 顶栏（模型/账户）+ 消息流 + 输入框，验收令牌体系的协同效果",
+    notes: [
+      "整页没有写任何新颜色——全部复用组件与令牌，证明体系可组合",
+      "三栏节奏：侧边栏 260px / 阅读列 44rem / 输入框与阅读列同宽",
+      "顶栏菜单已可点击开合（Radix 式的 trigger + panel 模式）",
+    ],
+    render: () => <ChatPage />,
+    wide: true,
+  },
+  {
+    id: "modetoggle",
+    name: "模式切换 Mode Toggle",
+    desc: "输入框上方的聊天/代理/计划分段切换（可点击）",
+    notes: [
+      "滑块指示器：0.5px 边框 + 投影 + elevated 背景（上游同款参数）",
+      "选中项只是文字加深，背景变化全由滑块承担",
+      "transform 位移切换，200ms ease",
+    ],
+    render: () => <ModeToggle />,
+  },
+  {
+    id: "terminal",
+    name: "终端面板 Terminal",
+    desc: "内嵌终端：窗口按钮头 + ANSI 风格输出（Agent 的执行窗口）",
+    notes: [
+      "背景映射 --gray-50 表面令牌，亮主题是真·浅色终端（与上游 xterm 面板一致）",
+      "ANSI 色不取终端默认色板，而取设计令牌（green/orange 等）保证主题协调",
+      "滚动条上游用 10px + border 色，悬停加深",
+    ],
+    render: () => <TerminalPanel />,
+  },
+  {
+    id: "diff",
+    name: "Diff 卡片 Diff Card",
+    desc: "代码变更展示：文件头统计 + 行级增删高亮",
+    notes: [
+      "增删行背景 = color-mix(green/red 10%, transparent)，不是实心红绿",
+      "hunk 行（@@）用 blue-400 弱强调",
+      "± 标记放独立 gutter 列，与代码对齐",
+    ],
+    render: () => <DiffCard />,
+  },
 ];
 
 function useTheme() {
@@ -209,9 +256,9 @@ export default function App() {
       </header>
 
       {selected ? (
-        <main className="detail">
+        <main className={`detail ${selected.wide ? "detail-wide" : ""}`}>
           <p className="detail-desc">{selected.desc}</p>
-          <div className="stage">{selected.render()}</div>
+          <div className={`stage ${selected.wide ? "stage-wide" : ""}`}>{selected.render()}</div>
           <section className="notes">
             <h2>观察要点</h2>
             <ul>

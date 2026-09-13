@@ -77,6 +77,8 @@ code {
 }
 
 .detail { padding: 24px 20px; max-width: 960px; margin: 0 auto; width: 100%; }
+.detail-wide { max-width: 1100px; }
+.stage-wide { padding: 12px; }
 .detail-desc {
   color: var(--app-color-text-foreground-secondary);
   font-size: 14px;
@@ -661,6 +663,174 @@ code {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* ---------- mode toggle (upstream: sliding indicator, 0.5px border) ---------- */
+.mode-toggle {
+  position: relative;
+  display: inline-flex;
+  border-radius: 999px;
+  background: var(--app-color-background-button-secondary);
+  padding: 3px;
+}
+.mode-toggle-item {
+  position: relative;
+  z-index: 1;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground-secondary);
+  border-radius: 999px;
+  padding: 5px 14px;
+  cursor: pointer;
+  transition: color 0.15s ease;
+}
+.mode-toggle-item.active { color: var(--app-color-text-foreground); }
+.mode-toggle-indicator {
+  position: absolute;
+  top: 3px;
+  bottom: 3px;
+  left: 3px;
+  width: calc((100% - 6px) / 3);
+  border-radius: 999px;
+  background: var(--app-color-background-elevated-primary-opaque);
+  border: 0.5px solid var(--app-color-border);
+  box-shadow: 0 1px 4px color-mix(in oklab, var(--alpha-base) 12%, transparent);
+  transition: transform 0.2s ease;
+}
+
+/* ---------- terminal panel (upstream xterm: bg = surface token) ---------- */
+.terminal {
+  width: 100%;
+  max-width: 40rem;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--gray-50);
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+}
+.terminal-header {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--app-color-border);
+  background: var(--app-color-background-button-secondary);
+}
+.terminal-dot { width: 10px; height: 10px; border-radius: 999px; flex: none; }
+.terminal-title {
+  margin-left: 8px;
+  font-size: 11px;
+  color: var(--app-color-text-foreground-secondary);
+}
+.terminal-body { padding: 12px 14px; line-height: 1.7; }
+.term-line { white-space: pre-wrap; color: var(--app-color-text-foreground); }
+.term-prompt { color: var(--green-500); font-weight: 700; margin-right: 8px; }
+.term-cmd { color: var(--app-color-text-foreground); }
+.term-dim { color: var(--app-color-text-foreground-secondary); }
+.term-green { color: var(--green-500); }
+.term-yellow { color: var(--orange-500); }
+.term-cursor {
+  display: inline-block;
+  width: 7px;
+  height: 1.05em;
+  margin-left: 4px;
+  background: var(--app-color-text-foreground);
+  vertical-align: text-bottom;
+  animation: cursor-blink 1s steps(2, start) infinite;
+}
+
+/* ---------- diff card ---------- */
+.diffcard {
+  width: 100%;
+  max-width: 40rem;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+}
+.diffcard-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  border-bottom: 1px solid var(--app-color-border);
+  background: var(--app-color-background-button-secondary);
+}
+.diffcard-path { font-size: 12px; font-weight: 600; }
+.diffcard-stats { display: flex; gap: 8px; font-size: 11px; font-weight: 700; }
+.diff-add { color: var(--green-500); }
+.diff-del { color: var(--red-500); }
+.diffcard-body { padding: 6px 0; line-height: 1.7; }
+.diff-line { display: flex; padding: 0 14px 0 0; }
+.diff-gutter {
+  width: 24px;
+  flex: none;
+  text-align: center;
+  color: var(--app-color-text-foreground-secondary);
+  user-select: none;
+}
+.diff-add-line, .diff-line.diff-add {
+  background: color-mix(in oklab, var(--green-500) 10%, transparent);
+}
+.diff-line.diff-del {
+  background: color-mix(in oklab, var(--red-500) 10%, transparent);
+}
+.diff-line.diff-hunk { color: var(--blue-400); }
+.diff-line.diff-add .diff-gutter { color: var(--green-500); }
+.diff-line.diff-del .diff-gutter { color: var(--red-500); }
+
+/* ---------- chat page (capstone assembly) ---------- */
+.chatpage {
+  display: flex;
+  width: 100%;
+  max-width: 60rem;
+  height: 620px;
+  border: 1px solid var(--app-color-border);
+  border-radius: 16px;
+  overflow: hidden;
+  background: var(--app-color-background-elevated-primary-opaque);
+}
+.chatpage .sidebar {
+  height: 100%;
+  border: none;
+  border-radius: 0;
+  border-right: 1px solid var(--app-color-border);
+  flex: none;
+}
+.chatpage-main {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+.chatpage-header {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--app-color-border);
+}
+.chatpage-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding: 24px 20px;
+  display: flex;
+  justify-content: center;
+}
+.chatpage-footer {
+  padding: 8px 20px 16px;
+  display: flex;
+  justify-content: center;
+}
+.chatpage-footer .composer { max-width: 44rem; }
+
+/* interactive states added in batch 1 */
+.model-pill.open { background: var(--app-color-background-button-tertiary-hover); }
+.rotate-180 { transform: rotate(180deg); }
 
 /* ---------- shimmer ---------- */.shimmer-text {
   font-size: 15px;

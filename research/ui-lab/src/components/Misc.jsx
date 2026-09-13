@@ -1,13 +1,18 @@
+import { useState } from "react";
 import { ChevronDownIcon } from "../icons.jsx";
 
 // Model picker pill + dropdown panel, reproduced layout only.
-export function ModelPill({ open = false }) {
+export function ModelPill({ open: initialOpen = false }) {
+  const [open, setOpen] = useState(initialOpen);
   return (
     <div className="model-pill-wrap">
-      <button className="model-pill">
+      <button
+        className={`model-pill ${open ? "open" : ""}`}
+        onClick={() => setOpen(!open)}
+      >
         <span className="model-pill-name">GPT-5</span>
         <span className="model-pill-tag">Thinking</span>
-        <ChevronDownIcon size={16} />
+        <ChevronDownIcon size={16} className={open ? "rotate-180" : ""} />
       </button>
       {open && (
         <div className="menu-panel">
