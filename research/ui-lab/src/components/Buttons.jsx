@@ -1,4 +1,4 @@
-import { ArrowUpIcon, PaperclipIcon, MicIcon } from "../icons.jsx";
+import { ArrowUpIcon, PaperclipIcon, MicIcon, PlusIcon, ChevronDownIcon, FolderIcon, PuzzleIcon, MonitorIcon } from "../icons.jsx";
 
 // ---- Button -------------------------------------------------------------
 export function Button({ variant = "primary", children, disabled }) {
@@ -40,24 +40,47 @@ export function ButtonsDemo() {
 }
 
 // ---- Composer -----------------------------------------------------------
+// Geometry measured from the live app (CDP, 640px wide):
+//   input y=14; footer row y=62: [+](x8) ... [5.4 High](x527,w69) [Send](x604)
+//   rail BELOW the bordered box (y=104): [project chip](w156) [Plugins](w85)
+//   ... [run-location icon](x595). No mic in the Codex agent flavor.
 export function Composer() {
   return (
-    <div className="composer">
-      <textarea
-        className="composer-input"
-        rows={1}
-        placeholder="询问任何问题"
-      />
-      <div className="composer-bar">
-        <button className="icon-btn" aria-label="附件">
-          <PaperclipIcon />
+    <div className="composer-wrap">
+      <div className="composer">
+        <textarea
+          className="composer-input"
+          rows={1}
+          placeholder="Ask Codex to do something…"
+        />
+        <div className="composer-bar">
+          <button className="icon-btn" aria-label="Add files and more">
+            <PlusIcon />
+          </button>
+          <div className="composer-spacer" />
+          <button className="intel-trigger" aria-label="Select model and reasoning effort">
+            <span className="intel-model">5.4</span>
+            <span className="intel-effort">High</span>
+            <ChevronDownIcon size={14} />
+          </button>
+          <button className="icon-btn icon-btn-solid" aria-label="Send">
+            <ArrowUpIcon />
+          </button>
+        </div>
+      </div>
+      <div className="composer-rail">
+        <button className="proj-chip">
+          <FolderIcon size={14} />
+          <span>codex-desktop-linux</span>
+          <ChevronDownIcon size={13} />
+        </button>
+        <button className="rail-btn">
+          <PuzzleIcon size={14} />
+          <span>Plugins</span>
         </button>
         <div className="composer-spacer" />
-        <button className="icon-btn" aria-label="语音输入">
-          <MicIcon />
-        </button>
-        <button className="icon-btn icon-btn-solid" aria-label="发送">
-          <ArrowUpIcon />
+        <button className="icon-btn" aria-label="Choose where to run this chat">
+          <MonitorIcon />
         </button>
       </div>
     </div>

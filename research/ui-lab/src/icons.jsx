@@ -198,3 +198,16 @@ export const ClockIcon = (p) => (
     <path d="M12 6v6l4 2" />
   </Icon>
 );
+
+export const PuzzleIcon = (p) => (
+  <Icon {...p}>
+    <path d="M14 7h3a1 1 0 0 1 1 1v3a1 1 0 0 0 1 1h1a2 2 0 1 1 0 4h-1a1 1 0 0 0-1 1v3a1 1 0 0 1-1 1h-3a1 1 0 0 1-1-1v-1a2 2 0 1 0-4 0v1a1 1 0 0 1-1 1H6a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a2 2 0 1 0 0-4H6a1 1 0 0 1-1-1V8a1 1 0 0 1 1-1h3a1 1 0 0 0 1-1V5a2 2 0 1 1 4 0v1a1 1 0 0 0 1 1Z" />
+  </Icon>
+);
+
+export const MonitorIcon = (p) => (
+  <Icon {...p}>
+    <rect x="2" y="3" width="20" height="14" rx="2" />
+    <path d="M8 21h8M12 17v4" />
+  </Icon>
+);

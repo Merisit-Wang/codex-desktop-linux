@@ -39,11 +39,12 @@ const registry = [
   {
     id: "composer",
     name: "输入框 Composer",
-    desc: "聊天主输入区：大圆角容器 + 底部工具条 + 实心发送钮",
+    desc: "Agent 主输入区：已按真实应用 CDP 实测修正（640px 宽几何数据）",
     notes: [
-      "容器圆角 28px，边框 1px 8% 透明前景色",
-      "聚焦时边框加深，整体带轻微阴影",
-      "发送钮为实心圆（前景色/背景色反转）",
+      "主行（y=62）：[+] 居左；[5.4 High ▾]（模型+推理档, w=69）与 [Send] 居右同行",
+      "rail 在边框盒之外（y=104）：[项目 chip w=156] [Plugins] 居左，[运行位置] 图标居右",
+      "Codex Agent 版无麦克风按钮（那是 ChatGPT 消费版元素）",
+      "容器 28px 圆角 + 1px 8% 边框 + 聚焦加深；发送钮实心圆",
     ],
     render: () => (
       <div style={{ maxWidth: 640, width: "100%" }}>

@@ -207,6 +207,50 @@ code {
 .composer-bar { display: flex; align-items: center; gap: 4px; }
 .composer-spacer { flex: 1; }
 
+/* ---------- composer: intelligence trigger + rail (measured from live DOM) ---------- */
+.composer-wrap { width: 100%; }
+.intel-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font: inherit;
+  font-size: 13px;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+}
+.intel-trigger:hover { background: var(--app-color-background-button-tertiary-hover); }
+.intel-model { font-weight: 600; }
+.intel-effort { color: var(--app-color-text-foreground-secondary); font-weight: 400; }
+.composer-rail {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  padding: 0 9px; /* 实测 x=17 → rail 相对 composer 左缘内缩约 17px */
+}
+.rail-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 12.5px;
+  font-weight: 500;
+  border: none;
+  border-radius: 999px;
+  padding: 5px 10px;
+  cursor: pointer;
+  background: transparent;
+  color: var(--app-color-text-foreground-secondary);
+}
+.rail-btn:hover {
+  background: var(--app-color-background-button-tertiary-hover);
+  color: var(--app-color-text-foreground);
+}
+
 /* ---------- messages ---------- */
 .chat-surface {
   width: 100%;
