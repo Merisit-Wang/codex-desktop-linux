@@ -15,6 +15,7 @@ import { ChatPage } from "./components/ChatPage.jsx";
 import { ModeToggle, TerminalPanel, DiffCard } from "./components/Agent.jsx";
 import { FormControls, EmojiPicker, DatePickerPanel } from "./components/Forms.jsx";
 import { WorktreeDropdown, EditorTabs, BrowserPanel } from "./components/Panels.jsx";
+import { SlashMenu } from "./components/SlashMenu.jsx";
 import {
   WorkspaceSelectPage, WorkspaceRootDialog, FileTreePane, ProjectChip,
 } from "./components/Workspace.jsx";
@@ -307,6 +308,19 @@ const registry = [
       "视口内容的灰块卡片复用 secondary 背景令牌",
     ],
     render: () => <BrowserPanel />,
+  },
+  {
+    id: "slashmenu",
+    name: "斜杠命令 Slash Menu",
+    desc: "CDP 实测的命令面板：17 条内置命令 + Skills 分区（w=736, h=320, r=20）",
+    notes: [
+      "行结构（h=29）：15px 图标 + 命令名(500) + 描述(12px 次要色) + 右侧 badge/子菜单箭头",
+      "命令即功能地图：Compact/Fork/Goal/Init(AGENTS.md)/MCP/Plan mode/Reasoning/Side/Status…",
+      "Skills 分区（间隔 30px）带 System/Personal badge——技能系统是一等公民",
+      "还有彩蛋：Pet（桌面宠物）命令",
+    ],
+    render: () => <SlashMenu />,
+    wide: true,
   },
   {
     id: "wsselect",
