@@ -211,3 +211,56 @@ export const MonitorIcon = (p) => (
     <path d="M8 21h8M12 17v4" />
   </Icon>
 );
+
+export const PullRequestIcon = (p) => (
+  <Icon {...p}>
+    <circle cx="6" cy="6" r="2.5" />
+    <circle cx="6" cy="18" r="2.5" />
+    <circle cx="18" cy="18" r="2.5" />
+    <path d="M6 8.5v7M18 15.5v-4a3.5 3.5 0 0 0-3.5-3.5H12" />
+  </Icon>
+);
+
+export const CalendarIcon = (p) => (
+  <Icon {...p}>
+    <rect x="3" y="4" width="18" height="17" rx="2" />
+    <path d="M8 2v4M16 2v4M3 9h18" />
+  </Icon>
+);
+
+export const PinIcon = (p) => (
+  <Icon {...p}>
+    <path d="M12 17v5M9 3h6l1 7 2.5 2.5a.5.5 0 0 1-.35.85H5.85a.5.5 0 0 1-.35-.85L8 10Z" />
+  </Icon>
+);
+
+export const PanelRightIcon = (p) => (
+  <Icon {...p}>
+    <rect x="3" y="3" width="18" height="18" rx="2" />
+    <path d="M15 3v18" />
+  </Icon>
+);
+
+export const DotsIcon = (p) => (
+  <Icon {...p}>
+    <circle cx="5" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    <circle cx="12" cy="12" r="1.5" fill="currentColor" stroke="none" />
+    <circle cx="19" cy="12" r="1.5" fill="currentColor" stroke="none" />
+  </Icon>
+);
+
+export const ArchiveIcon = (p) => (
+  <Icon {...p}>
+    <rect x="2" y="3" width="20" height="5" rx="1" />
+    <path d="M4 8v11a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8M10 12h4" />
+  </Icon>
+);
+
+export const ForkIcon = (p) => (
+  <Icon {...p}>
+    <circle cx="6" cy="5" r="2.5" />
+    <circle cx="18" cy="5" r="2.5" />
+    <circle cx="12" cy="19" r="2.5" />
+    <path d="M6 7.5v2A3.5 3.5 0 0 0 9.5 13h5a3.5 3.5 0 0 0 3.5-3.5v-2M12 13v3.5" />
+  </Icon>
+);

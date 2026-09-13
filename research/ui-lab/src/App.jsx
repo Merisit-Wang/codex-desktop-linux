@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { ButtonsDemo, Composer } from "./components/Buttons.jsx";
-import { MessagesDemo } from "./components/Messages.jsx";
+import { MessagesDemo, AgentMessagesDemo } from "./components/Messages.jsx";
 import { Sidebar } from "./components/Sidebar.jsx";
 import { ModelPill, TooltipDemo, ShimmerDemo } from "./components/Misc.jsx";
 import { CodeBlock, InlineCodeDemo } from "./components/CodeBlock.jsx";
@@ -57,20 +57,32 @@ const registry = [
     name: "消息 Messages",
     desc: "用户气泡右对齐灰底，助手消息无气泡 + 底部操作行",
     notes: [
-      "用户气泡：bg = --app-color-background-surface，圆角 24px，右对齐",
+      "用户气泡：bg = secondary 混合色，圆角 24px，右对齐",
       "助手消息无背景气泡，与阅读宽度对齐（约 44rem）",
       "操作行（复制/赞/重试）16px 小图标钮",
     ],
     render: () => <MessagesDemo />,
   },
   {
+    id: "agentmessages",
+    name: "Agent 消息流 Agent Messages",
+    desc: "CDP 实测的 Codex 会话组件：工作日志行、变更审查条、Agent 版操作集",
+    notes: [
+      "Agent 版操作集不同：用户消息=Copy/Edit，助手=Copy/Fork（无点赞/重试）",
+      "WorkLogRow：可折叠的「Worked for 3m 14s」，占满整行阅读列（x=729）",
+      "ReviewBar：「Review changed files +N」居左，Undo/Review 按钮居右",
+    ],
+    render: () => <AgentMessagesDemo />,
+  },
+  {
     id: "sidebar",
     name: "侧边栏 Sidebar",
-    desc: "对话列表：logo 区、搜索入口、分组标题、列表项 hover",
+    desc: "CDP 实测重写：宽 275，模式切换 + 导航行 + Projects/Recents 分区",
     notes: [
-      "背景比主区深半档（light: #f9f9f9 / dark: #161616）",
-      "列表项圆角 8px，hover 用前景 4% 透明混合",
-      "当前项左侧无强调条，仅靠底色区分",
+      "顶部：模式切换胶囊（h=32）+ Search 图标；导航行 h=30（New chat/Pull requests/Scheduled/Plugins）",
+      "Projects/Recents 分区头右侧有 options/新建 小按钮（h=25）",
+      "会话行 hover 才显示 Pin/Archive 动作（19×20）",
+      "背景比主区深半档，列表项圆角 8px，透明混合 hover",
     ],
     render: () => <Sidebar />,
   },

@@ -278,7 +278,7 @@ code {
 
 /* ---------- sidebar ---------- */
 .sidebar {
-  width: 260px;
+  width: 275px; /* 实测 275 */
   height: 480px;
   border-radius: 12px;
   background: var(--app-color-background-surface);
@@ -287,52 +287,134 @@ code {
   display: flex;
   flex-direction: column;
   font-size: 14px;
+  overflow: hidden;
 }
-.sidebar-header {
+.sidebar-top {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 6px 8px;
+  padding: 0 0 8px;
 }
-.sidebar-logo { display: inline-flex; }
-.sidebar-search {
-  display: flex;
+.mode-switch {
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   font: inherit;
-  color: var(--app-color-text-foreground-secondary);
-  background: transparent;
+  font-size: 14px;
+  font-weight: 600;
+  height: 32px; /* 实测 h=32 */
   border: none;
   border-radius: 8px;
-  padding: 8px;
+  padding: 0 8px;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+  cursor: pointer;
+}
+.mode-switch:hover { background: var(--app-color-background-button-tertiary-hover); }
+.sidebar-nav { display: flex; flex-direction: column; gap: 1px; margin-bottom: 8px; }
+.sidebar-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 30px; /* 实测 h=30 */
+  font: inherit;
+  font-size: 13.5px;
+  border: none;
+  border-radius: 8px;
+  padding: 0 8px;
+  background: transparent;
+  color: var(--app-color-text-foreground);
   cursor: pointer;
   text-align: left;
+  position: relative;
 }
-.sidebar-search:hover { background: var(--app-color-background-button-tertiary-hover); }
+.sidebar-row:hover { background: var(--app-color-background-button-tertiary-hover); }
+.sidebar-row.active { background: var(--app-color-background-button-secondary-hover); }
+.sidebar-row .icon { opacity: 0.7; flex: none; }
+.sidebar-section-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 8px 2px;
+}
 .sidebar-section {
+  font: inherit;
   font-size: 12px;
   font-weight: 500;
   color: var(--app-color-text-foreground-secondary);
-  padding: 12px 8px 4px;
+  border: none;
+  background: transparent;
+  padding: 0;
+  cursor: pointer;
 }
-.sidebar-list { display: flex; flex-direction: column; gap: 1px; overflow: auto; }
-.sidebar-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px;
-  border-radius: 8px;
-  color: var(--app-color-text-foreground);
-  text-decoration: none;
-}
-.sidebar-item:hover { background: var(--app-color-background-button-tertiary-hover); }
-.sidebar-item.active { background: var(--app-color-background-button-secondary-hover); }
-.sidebar-item-icon { flex: none; opacity: 0.6; }
+.sidebar-section-actions { display: inline-flex; gap: 2px; }
+.sidebar-list { display: flex; flex-direction: column; gap: 1px; overflow-y: auto; flex: 1; }
+.sidebar-chat { height: 31px; }
 .sidebar-item-title {
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.chat-item-actions {
+  display: none;
+  gap: 2px;
+  flex: none;
+}
+.sidebar-row:hover .chat-item-actions { display: inline-flex; }
+.icon-btn-xs { min-width: 19px; height: 20px; padding: 0 3px; } /* 实测 19×20 */
+
+/* ---------- agent messages (live-measured) ---------- */
+.msg-agent { flex-wrap: wrap; justify-content: flex-end; }
+.msg-actions-user { justify-content: flex-end; width: 100%; margin-top: 4px; }
+.worklog-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font: inherit;
+  font-size: 13px;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground-secondary);
+  padding: 6px 4px;
+  cursor: pointer;
+  border-radius: 8px;
+  text-align: left;
+}
+.worklog-row:hover { background: var(--app-color-background-button-tertiary-hover); }
+.worklog-chevron { opacity: 0.6; }
+.worklog-label { font-weight: 500; color: var(--app-color-text-foreground); }
+.worklog-steps { font-size: 12px; }
+.review-bar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  padding: 8px 12px;
+  background: var(--app-color-background-elevated-primary-opaque);
+}
+.review-files {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+  cursor: pointer;
+  padding: 0;
+}
+.review-count {
+  font-size: 11px;
+  font-weight: 600;
+  background: var(--app-color-background-button-secondary-active);
+  border-radius: 999px;
+  padding: 1px 7px;
+}
+.review-btn { padding: 6px 14px; font-size: 13px; }
 
 /* ---------- model pill + menu ---------- */
 .model-pill-wrap { position: relative; }
@@ -858,6 +940,24 @@ code {
   padding: 8px 12px;
   border-bottom: 1px solid var(--app-color-border);
 }
+.chatpage-title-wrap { flex: 1; display: flex; justify-content: center; min-width: 0; }
+.chatpage-title {
+  font: inherit;
+  font-size: 13.5px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+  border-radius: 8px;
+  padding: 4px 10px;
+  max-width: 320px; /* 实测 w=320 */
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.chatpage-title:hover { background: var(--app-color-background-button-tertiary-hover); }
+.chatpage-header-actions { display: flex; align-items: center; gap: 2px; }
 .chatpage-scroll {
   flex: 1;
   overflow-y: auto;
