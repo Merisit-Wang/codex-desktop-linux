@@ -148,3 +148,12 @@ grep '你找到的token名' research/ui-lab/src/tokens.css
 | ~~环境切换~~ ✅ 已复现 | `worktree-environment-dropdown` | 菜单收尾模式 |
 | ~~编辑器标签~~ ✅ 已复现 | `text-file-editor-tab-content` | dirty 圆点、注释高亮 |
 | ~~浏览器面板~~ ✅ 已复现 | `cloud-browser-preview` | chrome 分层、URL 胶囊 |
+| ~~工作区选择页~~ ✅ 已复现 | `select-workspace-page` | 启动屏卡片、最近列表 |
+| ~~目录选择弹窗~~ ✅ 已复现 | `remote-workspace-root-dialog` | 面包屑 + 目录行 |
+| ~~文件树~~ ✅ 已复现 | `review-file-tree-pane` | 缩进层级、Git 状态色 |
+| ~~项目芯片~~ ✅ 已复现 | `composer-project-selector` | 输入框目录标识 |
+| ~~Worktree 设置~~ ✅ 已复现 | `worktrees-settings-page` | 行式卡片、当前 badge |
+| ~~警告空态~~ ✅ 已复现 | `terminal-workspace-warning-state` | 虚线框空态语言 |
+| ~~引导横幅~~ ✅ 已复现 | `worktree-onboarding-banner` | 渐变图标焦点 |
+| ~~右键菜单~~ ✅ 已复现 | `workspace-file-context-menu` | 分组菜单、危险项处理 |
+| ~~空间切换~~ ✅ 已复现 | `business-switch-workspace-dialog` | 搜索 + 头像列表 |

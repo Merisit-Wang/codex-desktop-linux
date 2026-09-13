@@ -56,6 +56,8 @@ npm run gen:tokens # 上游 CSS 更新后重新生成 tokens.css
 | Worktree Dropdown | 分支图标胶囊 + 双行环境项 +「新建…」收尾 |
 | Editor Tabs | 未保存橙点替代关闭钮；高亮行 blue-400 内描边 |
 | Browser Preview | chrome 分层 + URL 无边框胶囊 + 28px 导航钮 |
+| **工作区链路（9 个）** | 选择页 / 目录弹窗 / 文件树 / 项目芯片 / Worktree 设置 / 警告空态 / 引导横幅 / 右键菜单 / 空间切换 |
+| └ 设计亮点 | 虚线框=待填充、危险动作 hover 才红、渐变图标仅用于引导焦点、空间方头像 vs 用户圆头像 |
 
 ## 已发现的上游问题（研究副产品）
 
