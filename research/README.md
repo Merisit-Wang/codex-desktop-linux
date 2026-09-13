@@ -1,11 +1,13 @@
 # 上游 UI 研究 —— 方法、产物与进一步复现指南
 
-> **研究对象的身份**：上游 deb 包名 `chatgpt`（"ChatGPT by OpenAI"），但 asar
-> 内工程名 `openai-codex-electron`、外壳代号 owl、构建元数据
-> `codexAppBrand: chatgpt`——OpenAI 已把产品线合并：**ChatGPT 桌面版 =
-> Codex 桌面外壳 + ChatGPT 品牌**。因此本研究的设计系统同时覆盖聊天组件
-> （chatgpt-code-block 等）与 Agent 组件（terminal-panel、worktree 等），
-> 这也是它对自己做桌面 AI Agent 的参考价值所在。
+> **研究对象的身份**：同一个 owl 应用（版本 26.908.40834）按平台/渠道打
+> 品牌 flavor——Linux 官方包为 `chatgpt`（"ChatGPT by OpenAI"），
+> mac/Windows 为 `Codex`（参见 CodexDesktop-Rebuild 项目，其上游为同一
+> CDN `codex-app-prod` 的 appcast）。asar 内工程名 `openai-codex-electron`、
+> 外壳代号 owl。因此本研究的设计系统对两种品牌同样成立，且同时覆盖聊天
+> 组件（chatgpt-code-block 等）与 Agent 组件（terminal-panel、worktree
+> 等）。补充：许多组件受 Statsig 云控 gate 控制（见 CodexDesktop-Rebuild
+> 的 STATSIG_GATES.md），个别组件在部分账户/地区不可见属正常现象。
 
 本目录是对上游 ChatGPT Linux 桌面应用（Electron）UI 设计的**个人学习研究**，
 包含两部分：
