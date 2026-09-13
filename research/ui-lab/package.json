@@ -6,6 +6,7 @@
   "description": "Experimental reproduction of upstream chat UI component styles (personal study)",
   "scripts": {
     "dev": "vite",
+    "dev:fresh": "vite --force",
     "build": "vite build",
     "preview": "vite preview",
     "gen:tokens": "node scripts/gen-tokens.mjs"

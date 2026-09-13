@@ -10,9 +10,18 @@
 ```bash
 npm install        # 首次（需要网络）
 npm run dev        # http://127.0.0.1:5179
-npm run build      # 产物到 dist/
+npm run dev:fresh  # 缓存异常时用（vite --force 强制重建预构建缓存）
+npm run build      # 产物到 dist/（含 sourcemap）
 npm run gen:tokens # 上游 CSS 更新后重新生成 tokens.css
 ```
+
+### Vite 配置要点（`vite.config.js`）
+
+- `resolve.alias`：`@/` 指向 `src/`
+- `css.devSourcemap` + `build.sourcemap`：DevTools 里可直接对照源码行（研究友好）
+- `server.strictPort`：端口被占直接报错，避免误开第二个实例看错页面
+- `server.watch.ignored`：忽略 `../upstream-ui/` 解包产物（几十万文件，防 inotify 耗尽）
+- 改了代码页面没更新？先 `npm run dev:fresh`，再不行 `rm -rf node_modules/.vite`
 
 ## 页面
 
