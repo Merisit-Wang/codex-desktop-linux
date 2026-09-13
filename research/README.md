@@ -132,3 +132,12 @@ grep '你找到的token名' research/ui-lab/src/tokens.css
 | ~~头像/账户菜单~~ ✅ 已复现 | `avatar-*` / `profile` | 玻璃拟态、角标、骨架屏 steps(48) 扫光 |
 | ~~流式打字光标~~ ✅ 已复现 | `streaming` | 块状光标、生成中才显示 |
 | ~~引用/来源卡片~~ ✅ 已复现 | `chatgpt-sources-*` | 上标引用 + 卡片栅格 |
+| ~~模式切换~~ ✅ 已复现 | `home-composer-mode-toggle` | 滑块指示器参数 |
+| ~~终端面板~~ ✅ 已复现 | `terminal-panel` / `xterm-*` | 背景令牌映射、ANSI 取色 |
+| ~~Diff 卡片~~ ✅ 已复现 | `diff-comment-card` | 增删行 color-mix 着色 |
+| ~~表单控件~~ ✅ 已复现 | `form` / `input-selector` | 滑杆拇指规格、聚焦令牌 |
+| ~~表情选择~~ ✅ 已复现 | `thread-emoji-picker-content` | 第三方库令牌换肤法 |
+| ~~日期选择~~ ✅ 已复现 | `DatePicker` | Radix Popover 弹层公式 |
+| ~~环境切换~~ ✅ 已复现 | `worktree-environment-dropdown` | 菜单收尾模式 |
+| ~~编辑器标签~~ ✅ 已复现 | `text-file-editor-tab-content` | dirty 圆点、注释高亮 |
+| ~~浏览器面板~~ ✅ 已复现 | `cloud-browser-preview` | chrome 分层、URL 胶囊 |

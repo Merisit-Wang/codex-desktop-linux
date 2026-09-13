@@ -14,6 +14,7 @@ import {
 import { ChatPage } from "./components/ChatPage.jsx";
 import { ModeToggle, TerminalPanel, DiffCard } from "./components/Agent.jsx";
 import { FormControls, EmojiPicker, DatePickerPanel } from "./components/Forms.jsx";
+import { WorktreeDropdown, EditorTabs, BrowserPanel } from "./components/Panels.jsx";
 import { BackIcon, SunIcon, MoonIcon } from "./icons.jsx";
 
 const registry = [
@@ -249,6 +250,43 @@ const registry = [
       "cell 用 aspect-ratio:1 保持正圆",
     ],
     render: () => <DatePickerPanel />,
+  },
+  {
+    id: "worktree",
+    name: "环境切换 Worktree Dropdown",
+    desc: "Git worktree / 云端环境的切换下拉（Agent 的运行上下文选择器）",
+    notes: [
+      "触发器 = 分支图标 + 名字胶囊，面板复用 menu-panel 体系",
+      "每项双行：名字 + 状态元信息（改动数 / 容器状态）",
+      "「新建环境…」放分隔线后，是上游菜单的固定收尾模式",
+    ],
+    render: () => (
+      <div style={{ paddingBottom: 260 }}>
+        <WorktreeDropdown />
+      </div>
+    ),
+  },
+  {
+    id: "editor",
+    name: "编辑器标签 Editor Tabs",
+    desc: "文件标签栏（未保存圆点）+ 带行号的只读编辑器（Agent 查看/修改文件）",
+    notes: [
+      "活动标签与内容区融为一体：上圆角 + 下边框 -1px 重叠",
+      "未保存 = 橙色圆点替代关闭按钮（dirty 状态的通用语言）",
+      "高亮行 = blue-400 8% 底 + 2px 左侧内描边（注释锚点样式）",
+    ],
+    render: () => <EditorTabs />,
+  },
+  {
+    id: "browser",
+    name: "浏览器面板 Browser Preview",
+    desc: "内嵌浏览器：导航栏 + URL 胶囊 + 视口（Agent 的网页操作窗口）",
+    notes: [
+      "chrome 区用 surface 背景与视口分层，URL 是无边框胶囊",
+      "导航按钮全部 28px 小图标钮，无文字",
+      "视口内容的灰块卡片复用 secondary 背景令牌",
+    ],
+    render: () => <BrowserPanel />,
   },
 ];
 

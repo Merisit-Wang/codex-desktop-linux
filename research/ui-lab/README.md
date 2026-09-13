@@ -46,6 +46,16 @@ npm run gen:tokens # 上游 CSS 更新后重新生成 tokens.css
 | Account Menu | 渐变头像 + 状态角标；危险项用错误色文字而非红底 |
 | Streaming | 块状光标 steps(2) 闪烁；骨架屏复刻 steps(48) 2.6s 扫光 |
 | Sources | 10px 上标引用 pill + favicon 方块/两行截断的来源卡 |
+| **Chat Page（收官）** | 侧边栏+顶栏+消息流+输入框整页拼装，零新增颜色 |
+| Mode Toggle | 滑块指示器 0.5px 边 + 投影（上游同款参数） |
+| Terminal | 背景映射表面令牌（亮主题真·浅色终端），ANSI 色取令牌 |
+| Diff Card | 增删行 color-mix 10% 着色 + gutter ± 标记 |
+| Form Controls | 滑杆复刻上游 24px 轨道/白色拇指；选中态走主按钮色 |
+| Emoji Picker | 上游给 emoji-picker-react 换肤的令牌映射法 |
+| Date Picker | 弹层三件套：elevated 底 + hairline 边 + 复合投影 |
+| Worktree Dropdown | 分支图标胶囊 + 双行环境项 +「新建…」收尾 |
+| Editor Tabs | 未保存橙点替代关闭钮；高亮行 blue-400 内描边 |
+| Browser Preview | chrome 分层 + URL 无边框胶囊 + 28px 导航钮 |
 
 ## 已发现的上游问题（研究副产品）
 

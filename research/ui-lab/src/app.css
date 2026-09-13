@@ -1020,6 +1020,139 @@ code {
   color: var(--app-color-text-button-primary);
 }
 
+/* ---------- worktree / environment dropdown ---------- */
+.env-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  border: none;
+  background: transparent;
+  color: var(--app-color-text-foreground);
+  border-radius: 999px;
+  padding: 6px 10px;
+  cursor: pointer;
+}
+.env-trigger:hover { background: var(--app-color-background-button-tertiary-hover); }
+.env-name { max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.env-panel { min-width: 280px; }
+.env-item { justify-content: flex-start; gap: 10px; }
+.env-item .icon { opacity: 0.7; flex: none; margin-top: 2px; align-self: flex-start; }
+.env-item .menu-check { margin-left: auto; }
+.env-item > div { flex: 1; min-width: 0; }
+
+/* ---------- editor tabs ---------- */
+.editor {
+  width: 100%;
+  max-width: 40rem;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--app-color-background-elevated-primary-opaque);
+  font-size: 13px;
+}
+.editor-tabs {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px 0;
+  background: var(--app-color-background-surface);
+  border-bottom: 1px solid var(--app-color-border);
+}
+.editor-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 8px 8px 0 0;
+  color: var(--app-color-text-foreground-secondary);
+  cursor: pointer;
+  border: 1px solid transparent;
+  border-bottom: none;
+}
+.editor-tab:hover { color: var(--app-color-text-foreground); }
+.editor-tab.active {
+  background: var(--app-color-background-elevated-primary-opaque);
+  border-color: var(--app-color-border);
+  color: var(--app-color-text-foreground);
+  margin-bottom: -1px;
+}
+.editor-dirty {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--orange-400);
+}
+.editor-close { opacity: 0.6; }
+.editor-body {
+  padding: 10px 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  line-height: 1.7;
+}
+.editor-line { display: flex; padding: 0 14px 0 0; }
+.editor-line.highlight {
+  background: color-mix(in oklab, var(--blue-400) 8%, transparent);
+  box-shadow: inset 2px 0 0 var(--blue-400);
+}
+.editor-ln {
+  width: 40px;
+  flex: none;
+  text-align: right;
+  padding-right: 14px;
+  color: var(--app-color-text-foreground-secondary);
+  opacity: 0.6;
+  user-select: none;
+}
+
+/* ---------- browser preview panel ---------- */
+.browser {
+  width: 100%;
+  max-width: 40rem;
+  border: 1px solid var(--app-color-border);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--app-color-background-elevated-primary-opaque);
+}
+.browser-chrome {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--app-color-border);
+  background: var(--app-color-background-surface);
+}
+.browser-url {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 8px;
+  padding: 5px 12px;
+  border-radius: 999px;
+  background: var(--app-color-background-button-secondary);
+  color: var(--app-color-text-foreground-secondary);
+  font-size: 12px;
+}
+.browser-viewport { padding: 20px; }
+.browser-hero {
+  border-radius: 10px;
+  padding: 28px 20px;
+  text-align: center;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(120deg, var(--blue-400), var(--purple-400));
+  margin-bottom: 12px;
+}
+.browser-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.browser-card {
+  height: 56px;
+  border-radius: 8px;
+  background: var(--app-color-background-button-secondary);
+}
+
 /* ---------- shimmer ---------- */.shimmer-text {
   font-size: 15px;
   font-weight: 500;

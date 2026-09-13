@@ -131,3 +131,45 @@ export const GlobeIcon = (p) => (
     <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20M2 12h20" />
   </Icon>
 );
+
+export const BranchIcon = (p) => (
+  <Icon {...p}>
+    <circle cx="6" cy="6" r="2.5" />
+    <circle cx="6" cy="18" r="2.5" />
+    <circle cx="18" cy="8" r="2.5" />
+    <path d="M6 8.5v7M18 10.5c0 4-4 4.5-9 4.5" />
+  </Icon>
+);
+
+export const LockIcon = (p) => (
+  <Icon {...p}>
+    <rect x="4" y="11" width="16" height="10" rx="2" />
+    <path d="M8 11V7a4 4 0 0 1 8 0v4" />
+  </Icon>
+);
+
+export const ReloadIcon = (p) => (
+  <Icon {...p}>
+    <path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8" />
+    <path d="M21 3v5h-5" />
+  </Icon>
+);
+
+export const ArrowRightIcon = (p) => (
+  <Icon {...p}>
+    <path d="M5 12h14M12 5l7 7-7 7" />
+  </Icon>
+);
+
+export const FileIcon = (p) => (
+  <Icon {...p}>
+    <path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z" />
+    <path d="M14 2v5h5" />
+  </Icon>
+);
+
+export const XIcon = (p) => (
+  <Icon {...p}>
+    <path d="M18 6 6 18M6 6l12 12" />
+  </Icon>
+);
