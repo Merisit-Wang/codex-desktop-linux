@@ -9,6 +9,12 @@
 > 等）。补充：许多组件受 Statsig 云控 gate 控制（见 CodexDesktop-Rebuild
 > 的 STATSIG_GATES.md），个别组件在部分账户/地区不可见属正常现象。
 
+> **实证验证（2026-09-13）**：在本机并排运行两个发行版对比——
+> CodexDesktop-Rebuild（mac 载荷 + Owl API 补丁，Codex 品牌）与
+> codex-desktop-linux 构建产物（官方 Linux deb 原样，ChatGPT Community
+> 品牌）——**确认两者 webview UI 完全一致**。因此本研究的 29 个复现
+> 组件与 421 个令牌对两种品牌、三个平台（mac/Win/Linux）均成立。
+
 本目录是对上游 ChatGPT Linux 桌面应用（Electron）UI 设计的**个人学习研究**，
 包含两部分：
 
