@@ -191,16 +191,13 @@ function createUiFontSizeExtractedApp() {
   const targets = [
     path.join(buildDir, "src-fixture.js"),
     path.join(buildDir, "worker.js"),
-    path.join(webviewDir, "src-fixture.js"),
+    path.join(webviewDir, "app-shared-fixture.js"),
   ];
   for (const target of targets) {
     fs.writeFileSync(target, uiFontSizeBundleFixture());
   }
   fs.writeFileSync(path.join(buildDir, "unrelated.js"), "console.log('unrelated');");
-  fs.writeFileSync(
-    path.join(webviewDir, "app-initial-retired.js"),
-    uiFontSizeBundleFixture(),
-  );
+  fs.writeFileSync(path.join(webviewDir, "src-unrelated.js"), "console.log('unrelated');");
   return { extractedDir, targets };
 }
 
@@ -757,7 +754,8 @@ test("English reasoning effort labels can be disabled", () => {
 });
 
 test("sidebar project descriptor targets only the current project sidebar asset", () => {
-  assert.match("app-initial-BTphDPeq.js", PROJECTS_SIDEBAR_ASSET_PATTERN);
+  assert.match("app-shared-BTphDPeq.js", PROJECTS_SIDEBAR_ASSET_PATTERN);
+  assert.doesNotMatch("app-initial-BTphDPeq.js", PROJECTS_SIDEBAR_ASSET_PATTERN);
   assert.doesNotMatch(
     "app-initial~app-main~page-kMhXWEru.js",
     PROJECTS_SIDEBAR_ASSET_PATTERN,

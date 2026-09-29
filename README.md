@@ -22,9 +22,10 @@ distinguish from OpenAI's separate **ChatGPT** package.
 
 OpenAI's signed Linux `.deb` is the only upstream source. The official
 Electron runtime, native modules, bundled `codex` and `rg`, code-mode host,
-plugins, libraries, locales, and Owl metadata are reused directly. With no
-ASAR-changing feature enabled, `resources/app.asar` remains byte-for-byte
-identical to the official package.
+plugins, libraries, locales, and Owl metadata are reused directly. A clean
+build applies only required compatibility patches to `resources/app.asar` and
+preserves the official ELF runtime and bundled tools byte-for-byte. Optional
+Linux features remain disabled unless explicitly selected.
 
 <p align="center">
   <a href="#install">Install</a> ·
@@ -198,12 +199,12 @@ used by both official and Community applications.
 |---|---|---|
 | Official ChatGPT Linux runtime | Always | Copied from the verified official `.deb` data payload |
 | Signed source verification | Always | Pinned repository key → `InRelease` → `Packages` SHA-256 → package SHA-256 |
-| Byte-identical baseline ASAR | Always | The ASAR is not unpacked when no enabled feature needs it |
 | Native deb, RPM, and pacman packages | Manual build | `make deb`, `make rpm`, or `make pacman` |
 | AppImage | Manual build | `make appimage`; no automatic sandbox bypass or bundled updater |
 | Nix flake | Manual build | `nix run github:ilysenko/codex-desktop-linux` |
 | Transactional update manager | Native packages | Included unless built with `PACKAGE_WITH_UPDATER=0` |
 | Official Browser and Chrome integrations | Upstream | Reused from the official Linux package; no legacy port layer |
+| Focusable Quit confirmation | Always | Required compatibility patch parents the upstream confirmation on Linux |
 | Optional Linux feature framework | Disabled | Configure with `make setup-native` |
 | Distinct desktop identity | Always | **ChatGPT Community**, blue `C` icon, `codex-desktop` package identity |
 
@@ -238,6 +239,7 @@ requirements, known limitations, configuration, and tests.
 | `omarchy-theme` | Load CSS generated from the current Omarchy theme | [Docs](linux-features/omarchy-theme/README.md) |
 | `persistent-status-panel` | Keep the `/status` panel across thread switches and restarts | [Docs](linux-features/persistent-status-panel/README.md) |
 | `pet-overlay` | Linux avatar-overlay placement and compositor hints | [Docs](linux-features/pet-overlay/README.md) |
+| `preferred-editor-file-links` | Open source links in the selected editor with a plain click | [Docs](linux-features/preferred-editor-file-links/README.md) |
 | `project-group-last-updated-sort` | Apply Last updated ordering to project groups and tasks | [Docs](linux-features/project-group-last-updated-sort/README.md) |
 | `project-task-sort` | Restore Created ordering for alternate Projects tasks | [Docs](linux-features/project-task-sort/README.md) |
 | `read-aloud` | Add Linux read-aloud controls to assistant responses | [Docs](linux-features/read-aloud/README.md) |

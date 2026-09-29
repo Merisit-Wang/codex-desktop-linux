@@ -38,6 +38,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Changed
 
+- Restored and adapted the required Quit-confirmation focus patch because the
+  current signed Linux package still opens its synchronous confirmation without
+  a parent window. The patch discovers the handler through its unique semantic
+  contract, uses a visible parent with reentrancy protection, and fails closed
+  when that contract drifts.
 - Remote mobile control now relies on the current upstream account-enrollment
   compatibility and Connections tab resolver instead of patching duplicate
   Linux-specific fallbacks into those paths.
@@ -50,6 +55,32 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
 
 ### Fixed
 
+- The documented `UPSTREAM_DEB=/path/to/chatgpt_<version>_<arch>.deb make build-app`
+  invocation (also `make rebuild`, `rebuild-install`, `inspect-upstream`, and
+  `rebuild-next`) no longer fails with "Only one upstream .deb path may be
+  provided". The Makefile forwards `UPSTREAM_DEB` to `install.sh` both through
+  the recipe environment and as the positional argument, and duplicate-input
+  detection treated that single documented input as two conflicting paths. A
+  positional argument is now rejected only when it differs from the
+  environment-provided path.
+- The NixOS module publishes the package's workspace runtime libraries through
+  `programs.nix-ld.libraries` when `programs.nix-ld` is enabled. Codex sources
+  a login-shell snapshot before every sandboxed command, and on such systems
+  that snapshot restores the host `NIX_LD_LIBRARY_PATH` over the value set by
+  the packaged Bubblewrap adapter, so the adapter's libraries never reached the
+  primary runtime's headless LibreOffice. The package exposes the list as
+  `passthru.workspaceRuntimeLibraries`; the module test and the NixOS VM test
+  cover the nix-ld path.
+- The Nix workspace runtime now lets the primary runtime's bundled headless
+  LibreOffice start on NixOS. Document conversions previously failed with
+  `liblcms2.so.2: cannot open shared object file` and, once that library was
+  present, `libcurl.so.4: version CURL_OPENSSL_4 not found`, because the
+  sandbox library path carried only the GnuTLS-compat curl needed by the
+  bundled Git. The path now includes `freetype` and `lcms2` and places the
+  stock curl ahead of the GnuTLS-compat build, so `libcurl.so.4` resolves with
+  OpenSSL symbol versions while `libcurl-gnutls.so.4` still reaches Git. The
+  `nix-runtime` checks and the VM smoke test run a document-runtime probe that
+  links all three libraries.
 - Default builds now repair the renderer module cycle in signed stable Linux
   `26.908.31748` that can leave the main window empty with
   `Initial route prefetch failed: n is not a function`. The required core
@@ -223,8 +254,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/).
   kill and held the pipe open until the sleep expired, so even a CLI that
   answers `--version` in ~50 ms blocked the launch path for ~1 s. The
   watchdog now runs detached from the caller's stdout/stderr, cutting that
-  launch phase from ~1010 ms to ~74 ms and making the window (and GNOME's
-  startup feedback) appear about a second sooner on every cold start.
+- ASAR repacking no longer drops unpack rules for official packages that mark
+  whole directories as unpacked. The build invoked asar through
+  `npx --yes @electron/asar`, and npx re-parses its arguments through a shell
+  on POSIX; that shell expanded the `{*.node,*.so,*.dylib}` unpack glob and
+  multi-directory `--unpack-dir "{a,b}"` patterns into separate words, so asar
+  silently honored only the first alternative. The signed stable package
+  `26.924.22138` marks `node-hid/hidapi`, `node-hid/node_modules`,
+  `better-sqlite3/lib`, `node-pty/build`, and other directories as unpacked,
+  so repacking it failed the fail-closed layout verification and the candidate
+  was never promoted. The asar CLI is now resolved once and invoked directly,
+  which keeps glob arguments intact; the repacked archive preserves the
+  official pack/unpack layout and the `.unpacked` payload byte-for-byte.
 
 ### Changed
 

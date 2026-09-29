@@ -4,7 +4,7 @@ const JS_IDENT = "[A-Za-z_$][\\w$]*";
 const PATCH_MARKER = "codexLinuxApiKeyFastTier";
 const MODEL_MARKER = "codexLinuxApiKeyServiceTierModel";
 const SERVICE_TIER_GATE_SHAPE = new RegExp(
-  `authMethod===\`chatgpt\`[\\s\\S]{0,200}?authMethod\\?\\?null` +
+  `authMethod===\`chatgpt\`(?:\\|\\|${JS_IDENT}\\?\\.authMethod===\`personalAccessToken\`)?[\\s\\S]{0,200}?authMethod\\?\\?null` +
     `[\\s\\S]{0,1200}?featureRequirements\\?\\.fast_mode` +
     `[\\s\\S]{0,500}?\\{isServiceTierAllowed:${JS_IDENT},isLoading:${JS_IDENT}\\}`,
 );
@@ -34,18 +34,18 @@ function warn(message, patchName) {
 
 function applyApiKeyServiceTierGatePatch(source) {
   const gateNeedle = new RegExp(
-    `(${JS_IDENT})=(${JS_IDENT})\\?\\.authMethod===\\\`chatgpt\\\`,` +
+    `(${JS_IDENT})=(${JS_IDENT})\\?\\.authMethod===\\\`chatgpt\\\`(?:\\|\\|\\2\\?\\.authMethod===\\\`personalAccessToken\\\`)?[,]` +
       `(${JS_IDENT})=\\2\\?\\.authMethod\\?\\?null([\\s\\S]{0,500}?),` +
-      `d=\\1&&!(${JS_IDENT})&&(${JS_IDENT})!=null&&\\6\\?\\.requirements\\?\\.featureRequirements\\?\\.fast_mode!==!1`,
+      `(${JS_IDENT})=\\1&&!(${JS_IDENT})&&(${JS_IDENT})!=null&&\\7\\?\\.requirements\\?\\.featureRequirements\\?\\.fast_mode!==!1`,
     "g",
   );
 
   const patched = source.replace(
     gateNeedle,
-    (_match, isChatGptVar, hostVar, authMethodVar, middle, loadingVar, requirementsVar) =>
-      `${isChatGptVar}=${hostVar}?.authMethod===\`chatgpt\`,` +
+    (_match, isChatGptVar, hostVar, authMethodVar, middle, allowedVar, loadingVar, requirementsVar) =>
+      `${isChatGptVar}=${hostVar}?.authMethod===\`chatgpt\`||${hostVar}?.authMethod===\`personalAccessToken\`,` +
       `${authMethodVar}=${hostVar}?.authMethod??null${middle},` +
-      `d=!${loadingVar}&&(${isChatGptVar}?${requirementsVar}!=null&&${requirementsVar}?.requirements?.featureRequirements?.fast_mode!==!1:${authMethodVar}===\`apikey\`)`,
+      `${allowedVar}=!${loadingVar}&&(${isChatGptVar}?${requirementsVar}!=null&&${requirementsVar}?.requirements?.featureRequirements?.fast_mode!==!1:${authMethodVar}===\`apikey\`)`,
   );
 
   if (patched !== source || PATCHED_SERVICE_TIER_GATE.test(source)) {
@@ -117,85 +117,124 @@ function fallbackFastTierHelper() {
   return `function ${PATCH_MARKER}(e){return e==null||e?.serviceTiers?.length||e?.${MODEL_MARKER}!==!0?null:{id:\`fast\`,name:\`Fast\`,description:\`1.5x speed, increased usage\`}}`;
 }
 
+function serviceTierResolverState(source) {
+  const current = [...source.matchAll(currentServiceTierResolverPattern("g"))];
+  const patched = [...source.matchAll(new RegExp(PATCHED_SERVICE_TIER_RESOLVER.source, "g"))];
+  const helper = fallbackFastTierHelper();
+  const helperCount = source.split(helper).length - 1;
+
+  if (current.length === 1 && patched.length === 0 && helperCount === 0 &&
+      !source.includes(PATCH_MARKER)) {
+    return { kind: "current", match: current[0] };
+  }
+  if (current.length === 0 && patched.length === 1 && helperCount === 1) {
+    return { kind: "patched", match: patched[0] };
+  }
+  return { kind: "invalid" };
+}
+
 function matchesApiKeyServiceTierResolverContract(source) {
-  return PATCHED_SERVICE_TIER_RESOLVER.test(source) || currentServiceTierResolverPattern().test(source);
+  const state = serviceTierResolverState(source);
+  return state.kind === "current" || state.kind === "patched";
 }
 
 function applyApiKeyServiceTierResolverPatch(source) {
-  if (PATCHED_SERVICE_TIER_RESOLVER.test(source)) {
+  const state = serviceTierResolverState(source);
+  if (state.kind === "patched") {
     return source;
   }
-
-  const resolverPattern = currentServiceTierResolverPattern("g");
-  if (!resolverPattern.test(source)) {
+  if (state.kind !== "current") {
     return source;
   }
-  resolverPattern.lastIndex = 0;
-
-  const patchedResolver = source.replace(
-    resolverPattern,
-    (match, _resolverVar, modelVar, tierVar, findFastVar) => match.replace(
-      `${tierVar}===\`fast\`?${findFastVar}(${modelVar})`,
-      `${tierVar}===\`fast\`?${findFastVar}(${modelVar})??${PATCH_MARKER}(${modelVar})`,
-    ),
+  const [, _resolverVar, modelVar, tierVar, findFastVar] = state.match;
+  const replacement = state.match[0].replace(
+    `${tierVar}===\`fast\`?${findFastVar}(${modelVar})`,
+    `${tierVar}===\`fast\`?${findFastVar}(${modelVar})??${PATCH_MARKER}(${modelVar})`,
   );
-  const patched = source.includes(`function ${PATCH_MARKER}(`)
-    ? patchedResolver
-    : fallbackFastTierHelper() + patchedResolver;
+  const patchedResolver = source.slice(0, state.match.index) + replacement +
+    source.slice(state.match.index + state.match[0].length);
+  const patched = fallbackFastTierHelper() + patchedResolver;
 
-  return PATCHED_SERVICE_TIER_RESOLVER.test(patched) ? patched : source;
+  return serviceTierResolverState(patched).kind === "patched" ? patched : source;
 }
 
-function currentFallbackOptionsPattern(flags = "") {
+function fallbackOptionCallbackPattern() {
+  const concise =
+    `\\(\\{(?=[^{}]{0,800}description:)(?=[^{}]{0,800}iconKind:)` +
+    `(?=[^{}]{0,800}label:)(?=[^{}]{0,800}tier:\\2,value:\\2\\.id)[^{}]{1,800}\\}\\)`;
+  const block =
+    `\\{[^{}]{0,800}?return\\{(?=[^{}]{0,800}description:)(?=[^{}]{0,800}iconKind:)` +
+    `(?=[^{}]{0,800}label:)(?=[^{}]{0,800}tier:\\2,value:\\2\\.id)[^{}]{1,800}\\}\\}`;
+  return `(${JS_IDENT})=>(?:${concise}|${block})`;
+}
+
+function currentSharedFallbackOptionsPattern(flags = "") {
   return new RegExp(
-    `\\.\\.\\.\\((${JS_IDENT})\\?\\.serviceTiers\\?\\?\\[\\]\\)\\.map\\((${JS_IDENT})=>\\(\\{` +
-      `description:${JS_IDENT}\\(\\2\\),iconKind:${JS_IDENT}\\(\\2\\.id,\\2\\.name\\),` +
-      `label:${JS_IDENT}\\(\\2\\),tier:\\2,value:\\2\\.id\\}\\)\\)`,
+    `function ${JS_IDENT}\\((${JS_IDENT}),(${JS_IDENT})\\)\\{return\\[[^\\]]{0,800}?` +
+      `\\.\\.\\.\\(\\2\\?\\?\\[\\]\\)\\.map\\((${JS_IDENT})=>` +
+      fallbackOptionCallbackPattern().replace(`(${JS_IDENT})=>`, "") + `\\)\\]\\}`,
     flags,
   );
 }
 
-function matchesFallbackFastTierContract(source) {
-  if (hasCompleteFallbackFastTierPatch(source)) {
-    return true;
-  }
-
-  return currentFallbackOptionsPattern().test(source);
-}
-
-function hasCompleteFallbackFastTierPatch(source) {
-  return (
-    source.includes(`function ${PATCH_MARKER}(`) &&
-    source.includes(`[${PATCH_MARKER}(`) &&
-    source.includes(".filter(Boolean)).map")
+function patchedSharedFallbackOptionsPattern(flags = "") {
+  return new RegExp(
+    `function ${JS_IDENT}\\((${JS_IDENT}),(${JS_IDENT})\\)\\{return\\[[^\\]]{0,800}?` +
+      `\\.\\.\\.\\(\\(\\2\\?\\.length\\?\\2:\\[${PATCH_MARKER}\\(\\1\\)\\]\\)\\.filter\\(Boolean\\)\\)\\.map\\(` +
+      fallbackOptionCallbackPattern() + `\\)\\]\\}`,
+    flags,
   );
 }
 
+function fallbackOptionMatches(source, pattern) {
+  return [...source.matchAll(pattern)];
+}
+
+function fallbackFastTierState(source) {
+  const current = fallbackOptionMatches(source, currentSharedFallbackOptionsPattern("g"))
+    .map((match) => ({ match, modelVar: match[1], tiersVar: match[2] }));
+  const patched = fallbackOptionMatches(source, patchedSharedFallbackOptionsPattern("g"))
+    .map((match) => ({ match }));
+  const helper = fallbackFastTierHelper();
+  const helperCount = source.split(helper).length - 1;
+
+  if (current.length === 1 && patched.length === 0 && helperCount <= 1 &&
+      (!source.includes(`function ${PATCH_MARKER}(`) || helperCount === 1)) {
+    return { kind: "current", ...current[0], helperCount };
+  }
+  if (current.length === 0 && patched.length === 1 && helperCount === 1) {
+    return { kind: "patched", ...patched[0], helperCount };
+  }
+  return null;
+}
+
+function matchesFallbackFastTierContract(source) {
+  return fallbackFastTierState(source) != null;
+}
+
+function hasCompleteFallbackFastTierPatch(source) {
+  return fallbackFastTierState(source)?.kind === "patched";
+}
+
 function applyFallbackFastTierPatch(source) {
-  if (hasCompleteFallbackFastTierPatch(source)) {
+  const state = fallbackFastTierState(source);
+  if (state?.kind === "patched") {
     return source;
   }
-
-  let patched = source;
-  const optionsPatch = currentFallbackOptionsPattern("g");
-  if (!optionsPatch.test(patched)) {
+  if (state?.kind !== "current") {
     if (source.includes("serviceTiers")) {
       warn("Could not find service tier option helpers", "API key fallback fast tier patch");
     }
     return source;
   }
-  optionsPatch.lastIndex = 0;
-  if (!source.includes(`function ${PATCH_MARKER}(`)) {
-    patched = fallbackFastTierHelper() + patched;
-  }
-
-  patched = patched.replace(
-    optionsPatch,
-    (match, modelVar) => match.replace(
-      `...(${modelVar}?.serviceTiers??[])`,
-      `...((${modelVar}?.serviceTiers?.length?${modelVar}.serviceTiers:[${PATCH_MARKER}(${modelVar})]).filter(Boolean))`,
-    ),
+  const modelVar = state.modelVar;
+  const replacement = state.match[0].replace(
+    `...(${state.tiersVar}??[])`,
+    `...((${state.tiersVar}?.length?${state.tiersVar}:[${PATCH_MARKER}(${modelVar})]).filter(Boolean))`,
   );
+  let patched = source.slice(0, state.match.index) + replacement +
+    source.slice(state.match.index + state.match[0].length);
+  if (state.helperCount === 0) patched = fallbackFastTierHelper() + patched;
 
   if (hasCompleteFallbackFastTierPatch(patched)) {
     return patched;
@@ -243,9 +282,11 @@ function applyCurrentModelPatch(source) {
 }
 
 function applyCurrentResolverPatch(source) {
-  const resolverAlreadyPatched = PATCHED_SERVICE_TIER_RESOLVER.test(source);
-  const resolverCandidate = resolverAlreadyPatched ? source : applyApiKeyServiceTierResolverPatch(source);
-  const resolverReady = resolverAlreadyPatched || resolverCandidate !== source;
+  const resolverState = serviceTierResolverState(source);
+  const resolverCandidate = resolverState.kind === "patched"
+    ? source
+    : applyApiKeyServiceTierResolverPatch(source);
+  const resolverReady = resolverState.kind === "patched" || resolverCandidate !== source;
 
   if (!resolverReady) {
     warn("Could not identify current service tier resolver", "API key service tier resolver patch");
@@ -291,7 +332,7 @@ const descriptors = [
     phase: "webview-asset",
     order: 20608,
     ciPolicy: "optional",
-    pattern: /^src-[^.]+\.js$/,
+    pattern: /^app-shared-[^.]+\.js$/,
     assetMatch: matchesApiKeyServiceTierResolverContract,
     missingDescription: "current API key service tier resolver bundle",
     skipDescription: "API key service tier resolver patch",
@@ -302,7 +343,7 @@ const descriptors = [
     phase: "webview-asset",
     order: 20610,
     ciPolicy: "optional",
-    pattern: /^app-initial-[^.]+\.js$/,
+    pattern: /^app-shared-[^.]+\.js$/,
     assetMatch: matchesFallbackFastTierContract,
     missingDescription: "current API key service tier fallback bundle",
     skipDescription: "API key fallback fast tier patch",

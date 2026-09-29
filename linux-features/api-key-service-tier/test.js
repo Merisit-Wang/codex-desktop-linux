@@ -92,7 +92,7 @@ test("api-key-service-tier stays disabled until listed in features.json", () => 
   });
 });
 
-test("current package descriptors use the semantic app-initial owner", () => {
+test("current package descriptors use semantic app-initial and app-shared owners", () => {
   assert.deepEqual(
     descriptors.map((descriptor) => descriptor.id),
     [
@@ -102,10 +102,11 @@ test("current package descriptors use the semantic app-initial owner", () => {
       "api-key-service-tier-fallback",
     ],
   );
-  assert.ok(descriptors.filter(({ id }) => id !== "api-key-service-tier-resolver")
+  const sharedIds = new Set(["api-key-service-tier-resolver", "api-key-service-tier-fallback"]);
+  assert.ok(descriptors.filter((descriptor) => !sharedIds.has(descriptor.id))
     .every((descriptor) => descriptor.pattern.test("app-initial-Bd3Z1bES.js")));
-  assert.ok(descriptors.find(({ id }) => id === "api-key-service-tier-resolver")
-    ?.pattern.test("src-25d8c35b9f39.js"));
+  assert.ok(descriptors.filter((descriptor) => sharedIds.has(descriptor.id))
+    .every((descriptor) => descriptor.pattern.test("app-shared-d9439dc9e73f.js")));
   assert.ok(descriptors.every((descriptor) => !descriptor.pattern.test("projects-index-page-DjNy92Xe.js")));
 });
 
@@ -152,11 +153,15 @@ test("partial current drift is reported when the other exact target still applie
       fs.writeFileSync(
         path.join(
           assetsDir,
-          "app-initial-fallback-current.js",
+          "app-shared-fallback-current.js",
         ),
         [
-          "function tEe(e){return[gQ,...(e?.serviceTiers??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}",
+          "function pNr(e,t){return[gQ,...(t??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}",
         ].join(""),
+      );
+      fs.writeFileSync(
+        path.join(assetsDir, "app-shared-resolver-current.js"),
+        "function kH(e,t){return t==null?null:t===`fast`?AH(e):e?.serviceTiers?.find(e=>e.id===t)??null}",
       );
 
       const report = createPatchReport();
@@ -177,8 +182,8 @@ test("partial current drift is reported when the other exact target still applie
       assert.ok(warnings.some((warning) => warning.includes("current API key service tier gate bundle")));
       assert.equal(gate?.status, "skipped-optional");
       assert.equal(model?.status, "applied");
-      assert.equal(resolver?.status, "skipped-optional");
-      assert.equal(fallback?.status, "applied");
+      assert.equal(resolver?.status, "applied");
+      assert.equal(fallback?.status, "applied-with-warnings");
     } finally {
       fs.rmSync(tempApp, { recursive: true, force: true });
     }
@@ -229,6 +234,20 @@ test("service tier auth gate allows API-key hosts while preserving ChatGPT requi
 
   assert.match(patched, /d=!u&&\(a\?c!=null&&c\?\.requirements\?\.featureRequirements\?\.fast_mode!==!1:o===`apikey`\)/);
   assert.doesNotMatch(patched, /d=a&&!u&&c!=null/);
+});
+
+test("current auth gate keeps personal-access-token hosts on the requirements path", () => {
+  const source = "function YLn(e){let i=Gc(e),a=i?.authMethod===`chatgpt`||i?.authMethod===`personalAccessToken`,o=i?.authMethod??null,s={authMethod:o}, {data:c,isPending:l}=Kf(s),u=!!i?.isLoading||a&&l,d=a&&!u&&c!=null&&c?.requirements?.featureRequirements?.fast_mode!==!1;return{isServiceTierAllowed:d,isLoading:u}}";
+  const patched = applyPatchTwice(applyApiKeyServiceTierGatePatch, source);
+  assert.match(patched, /a=i\?\.authMethod===`chatgpt`\|\|i\?\.authMethod===`personalAccessToken`/u);
+  assert.match(patched, /d=!u&&\(a\?c!=null/u);
+  assert.match(patched, /:o===`apikey`\)/u);
+});
+
+test("current shared option owner synthesizes a fallback from its model argument", () => {
+  const source = "function pNr(e,t){return[xNr,...(t??[]).map(t=>{let n=gN(t.id,t.name),r=n===`fast`?mNr(e):null;return{description:dNr(t,r),iconKind:n,label:uNr(t),speedMultiplier:r,tier:t,value:t.id}})]}";
+  const patched = applyPatchTwice(applyFallbackFastTierPatch, source);
+  assert.match(patched, /t\?\.length\?t:\[codexLinuxApiKeyFastTier\(e\)\]/u);
 });
 
 test("service tier auth gate warning ignores unrelated fast-mode config guards", () => {
@@ -301,7 +320,7 @@ test("model list marker rejects the superseded pre-catalog signature byte-identi
 
 test("fallback fast tier is synthesized only for API-key model catalog entries", () => {
   const source = [
-    "function tEe(e){return[gQ,...(e?.serviceTiers??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}",
+    "function pNr(e,t){return[gQ,...(t??[]).map(t=>{let n=fQ(t.id,t.name),r=n===`fast`?1.5:null;return{description:eEe(t,r),iconKind:n,label:$Te(t),speedMultiplier:r,tier:t,value:t.id}})]}",
     "function nEe(e,t,n){return e?.find(e=>e.model===t&&hQ(e,n))??null}",
   ].join("");
 
@@ -310,70 +329,56 @@ test("fallback fast tier is synthesized only for API-key model catalog entries",
   assert.match(patched, /function codexLinuxApiKeyFastTier\(e\)/);
   assert.match(patched, /e\?\.codexLinuxApiKeyServiceTierModel!==!0\?null/);
   assert.match(patched, /codexLinuxApiKeyFastTier\(e\)/);
-  assert.match(patched, /\?e\.serviceTiers:\[codexLinuxApiKeyFastTier\(e\)\]\)\.filter\(Boolean\)\)\.map/);
+  assert.match(patched, /\?t:\[codexLinuxApiKeyFastTier\(e\)\]\)\.filter\(Boolean\)\)\.map/);
   assert.match(patched, /tier:t,value:t\.id/);
-  assert.doesNotMatch(patched, /\(e\?\.serviceTiers\?\?\[\]\)\.map/);
+  assert.doesNotMatch(patched, /\(t\?\?\[\]\)\.map/);
   assert.doesNotMatch(patched, /\)\?\?null\}function nEe/);
 });
 
-test("split service tier assets round-trip synthetic fast only for marked API-key models", () => {
+test("split semantic owners round-trip synthetic fast for an API-key model without service tiers", () => {
   const optionsSource = [
     "const gQ={value:null};function eEe(e){return e.description}function fQ(e){return e}function $Te(e){return e.name}",
-    "function tEe(e){return[gQ,...(e?.serviceTiers??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}",
+    "function pNr(e,t){return[gQ,...(t??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}",
   ].join("");
   const resolverSource = [
     "function py(e,t){let n=t?.trim().toLowerCase();return e===`priority`||e===`fast`||n===`fast`?`fast`:null}",
-    "function my(e,t){return t==null?null:t===`fast`?hy(e):e?.serviceTiers?.find(e=>e.id===t)??null}",
-    "function hy(e){return e?.serviceTiers?.find(e=>py(e.id,e.name)===`fast`||e.name.trim().toLowerCase()===`priority`)??null}",
+    "function kH(e,t){return t==null?null:t===`fast`?AH(e):e?.serviceTiers?.find(e=>e.id===t)??null}",
+    "function AH(e){return e?.serviceTiers?.find(e=>py(e.id,e.name)===`fast`||e.name.trim().toLowerCase()===`priority`)??null}",
   ].join("");
 
-  withFeatureConfig(["api-key-service-tier"], () => {
-    const tempApp = fs.mkdtempSync(path.join(os.tmpdir(), "api-key-service-tier-split-assets-"));
-    try {
-      const assetsDir = path.join(tempApp, "webview", "assets");
-      const optionsPath = path.join(assetsDir, "app-initial-97cc141651bb.js");
-      const resolverPath = path.join(assetsDir, "src-25d8c35b9f39.js");
-      fs.mkdirSync(assetsDir, { recursive: true });
-      fs.writeFileSync(optionsPath, optionsSource);
-      fs.writeFileSync(resolverPath, resolverSource);
+  const patchedOptions = applyPatchTwice(applyFallbackFastTierPatch, optionsSource);
+  const patchedResolver = applyPatchTwice(applyApiKeyServiceTierResolverPatch, resolverSource);
+  const optionsFor = Function(`${patchedOptions};return pNr`)();
+  const resolveTier = Function(`${patchedResolver};return kH`)();
+  const apiKeyModel = { codexLinuxApiKeyServiceTierModel: true };
+  const syntheticOption = optionsFor(apiKeyModel, apiKeyModel.serviceTiers).find(({ value }) => value === "fast");
 
-      const report = createPatchReport();
-      captureWarnings(() => patchExtractedApp(tempApp, { report }));
-      const optionsEntry = report.patches.find(
-        ({ name }) => name === "feature:api-key-service-tier:api-key-service-tier-fallback",
-      );
-      const resolverEntry = report.patches.find(
-        ({ name }) => name === "feature:api-key-service-tier:api-key-service-tier-resolver",
-      );
-      assert.equal(optionsEntry?.status, "applied");
-      assert.equal(resolverEntry?.status, "applied");
+  assert.equal(syntheticOption?.tier?.id, "fast");
+  assert.equal(resolveTier(apiKeyModel, syntheticOption.value)?.id, "fast");
+  assert.equal(resolveTier(apiKeyModel, syntheticOption.value)?.name, "Fast");
 
-      const patchedOptions = fs.readFileSync(optionsPath, "utf8");
-      const patchedResolver = fs.readFileSync(resolverPath, "utf8");
-      assert.equal(applyFallbackFastTierPatch(patchedOptions), patchedOptions);
-      assert.equal(applyApiKeyServiceTierResolverPatch(patchedResolver), patchedResolver);
-      const optionsFor = Function(`${patchedOptions};return tEe`)();
-      const resolveTier = Function(`${patchedResolver};return my`)();
-      const apiKeyModel = { codexLinuxApiKeyServiceTierModel: true };
-      const syntheticOption = optionsFor(apiKeyModel).find(({ value }) => value === "fast");
+  const upstreamFast = { id: "priority", name: "Priority", description: "Upstream fast" };
+  const chatGptModel = { codexLinuxApiKeyServiceTierModel: false, serviceTiers: [upstreamFast] };
+  assert.equal(resolveTier(chatGptModel, "fast"), upstreamFast);
+  assert.equal(resolveTier({}, "fast"), null);
+});
 
-      assert.equal(syntheticOption?.value, "fast");
-      assert.equal(syntheticOption?.tier.id, "fast");
-      assert.equal(resolveTier(apiKeyModel, syntheticOption.value)?.id, "fast");
-      assert.equal(resolveTier(apiKeyModel, syntheticOption.value)?.name, "Fast");
+test("service tier resolver classifies exactly one pristine or fully patched app-shared owner", () => {
+  const current =
+    "function kH(e,t){return t==null?null:t===`fast`?AH(e):e?.serviceTiers?.find(e=>e.id===t)??null}";
+  const other =
+    "function other(n,r){return r==null?null:r===`fast`?findFast(n):n?.serviceTiers?.find(t=>t.id===r)??null}";
+  const patched = applyApiKeyServiceTierResolverPatch(current);
+  const partial = patched.slice(patched.indexOf("function kH"));
+  const descriptor = descriptors.find(({ id }) => id === "api-key-service-tier-resolver");
 
-      const upstreamFast = { id: "priority", name: "Priority", description: "Upstream fast" };
-      const chatGptModel = { codexLinuxApiKeyServiceTierModel: false, serviceTiers: [upstreamFast] };
-      assert.equal(resolveTier(chatGptModel, "fast"), upstreamFast);
-      assert.equal(optionsFor(chatGptModel).find(({ value }) => value === "priority")?.tier, upstreamFast);
-
-      const unmarkedModel = {};
-      assert.equal(resolveTier(unmarkedModel, "fast"), null);
-      assert.equal(optionsFor(unmarkedModel).some(({ value }) => value === "fast"), false);
-    } finally {
-      fs.rmSync(tempApp, { recursive: true, force: true });
-    }
-  });
+  assert.equal(descriptor.assetMatch(current), true);
+  assert.equal(descriptor.assetMatch(patched), true);
+  for (const source of [current + other, current + patched, patched + patched, partial]) {
+    assert.equal(descriptor.assetMatch(source), false);
+    assert.equal(applyApiKeyServiceTierResolverPatch(source), source);
+    assert.equal(applyCurrentResolverPatch(source), source);
+  }
 });
 
 test("fallback fast tier leaves the asset byte-identical when one insertion point drifts", () => {
@@ -386,6 +391,35 @@ test("fallback fast tier leaves the asset byte-identical when one insertion poin
   }), [
     "WARN: Could not find service tier option helpers - skipping API key fallback fast tier patch",
   ]);
+});
+
+test("fallback fast tier rejects ambiguous, mixed, and semantic near-miss options", () => {
+  const descriptor = descriptors.find(({ id }) => id === "api-key-service-tier-fallback");
+  const current =
+    "function pNr(e,t){return[gQ,...(t??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}";
+  const patched = applyFallbackFastTierPatch(current);
+  const nearMiss =
+    "function telemetry(e,t){return[...(t??[]).map(t=>{audit(t);return{tier:t,value:t.id}})]}";
+  const partial = current.replace("label:$Te(t),", "");
+  const retired =
+    "function tEe(e){return[gQ,...(e?.serviceTiers??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}";
+
+  for (const source of [current + current, patched + current, nearMiss, partial, retired]) {
+    assert.equal(applyFallbackFastTierPatch(source), source);
+    assert.equal(descriptor.assetMatch(source), false);
+  }
+});
+
+test("fallback fast tier accepts the current official callback-body contract", () => {
+  const source =
+    "function pNr(e,t){return[gQ,...(t??[]).map(t=>{let n=fQ(t.id,t.name),r=n===`fast`?1.5:null;return{description:eEe(t,r),iconKind:n,label:$Te(t),speedMultiplier:r,tier:t,value:t.id}})]}";
+  const patched = applyFallbackFastTierPatch(source);
+
+  const descriptor = descriptors.find(({ id }) => id === "api-key-service-tier-fallback");
+  assert.equal(descriptor.assetMatch(source), true);
+  assert.notEqual(patched, source);
+  assert.equal(descriptor.assetMatch(patched), true);
+  assert.equal(applyFallbackFastTierPatch(patched), patched);
 });
 
 test("fallback descriptor reports skipped when one insertion point drifts", () => {
@@ -422,7 +456,7 @@ test("combined patch updates both service tier gate and fallback options", () =>
   const source = [
     "function sxe(e){let t=(0,cxe.c)(6),n=X(os),r=e?.hostId??n,i=Cf(r),a=i?.authMethod===`chatgpt`,o=i?.authMethod??null,s;t[0]!==r||t[1]!==o?(s={authMethod:o,hostId:r},t[0]=r,t[1]=o,t[2]=s):s=t[2];let{data:c,isPending:l}=ye(is,s),u=!!i?.isLoading||a&&l,d=a&&!u&&c!=null&&c?.requirements?.featureRequirements?.fast_mode!==!1,f;return t[3]!==u||t[4]!==d?(f={isServiceTierAllowed:d,isLoading:u},t[3]=u,t[4]=d,t[5]=f):f=t[5],f}",
     currentModelFixture(),
-    "function tEe(e){return[gQ,...(e?.serviceTiers??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}",
+    "function pNr(e,t){return[gQ,...(t??[]).map(t=>({description:eEe(t),iconKind:fQ(t.id,t.name),label:$Te(t),tier:t,value:t.id}))]}",
   ].join("");
 
   const patched = applyPatchTwice(applyApiKeyServiceTierPatch, source);

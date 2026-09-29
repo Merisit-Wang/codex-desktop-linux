@@ -17,8 +17,8 @@ coverage.
 
 ## Current OpenAI working-tree route
 
-OpenAI Desktop `26.901.20858` has a Linux-specific Parcel working-tree path in
-the official Linux package. That path calls `@parcel/watcher` directly instead of
+The current signed OpenAI Desktop package has a Linux-specific Parcel
+working-tree path. That path calls `@parcel/watcher` directly instead of
 the local `startFileWatch()` method this feature intercepts. The current route
 also forwards the caller's Git-ignore paths. When this feature
 is selected, its current-package patch reroutes that one local recursive
@@ -99,7 +99,7 @@ interpreter, and runs the already-open descriptor as `/proc/self/fd/3
 admission snapshot and the public capability layer consumes the same evidence.
 The downstream report shim from #1336 is therefore removed; import refusal
 still degrades to the preserved Parcel route (worker) or original local watch
-(src bundle) instead of crashing.
+(bootstrap companion bundle) instead of crashing.
 
 The Nix `PT_INTERP` relocation from #1332 remains necessary for upstream
 `@parcel/watcher`, which still owns the disabled-feature and unqualified-root

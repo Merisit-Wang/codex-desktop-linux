@@ -121,7 +121,8 @@ const LOCAL_FILE_WATCH_METHOD =
   new RegExp(`${LOCAL_FILE_WATCH_METHOD_PREFIX}${LOCAL_FILE_WATCH_CURRENT_BODY}`, "gu");
 const CURRENT_LOCAL_HOST_CLASS = new RegExp(
   `var (?<localHostClass>${IDENTIFIER_PATTERN})=class\\{` +
-    "runsInsideWsl;hostConfig=\\{id:`local`,display_name:`Local`,kind:`local`\\};" +
+    `runsInsideWsl;workspaceRoot=new ${IDENTIFIER_PATTERN}\\(this\\);` +
+    "hostConfig=\\{id:`local`,display_name:`Local`,kind:`local`\\};" +
     "id=`local`;isLocal=!0;",
   "gu",
 );
@@ -1714,7 +1715,7 @@ function currentContractReason(records, bundleCount) {
   );
   const branches = relevant.reduce((count, record) => count + record.branchCallCount, 0);
   return (
-    "Current 26.901.20858 working-tree contract rejected: " +
+    "Current working-tree contract rejected: " +
     `Found ${relevant.length} current local startFileWatch bundles ` +
     `(${targetNames.join(", ") || "none"}), ${parcelContractCount} Parcel route contracts, ` +
     `and ${workerParcelContractCount} in worker.js across ${bundleCount} build bundles; ` +
@@ -1816,33 +1817,33 @@ function findLocalFileWatchBundles(extractedDir, settings) {
   const workerRecords = relevant.filter(
     ({ bundlePath }) => path.basename(bundlePath) === "worker.js",
   );
-  const srcRecords = relevant.filter(({ bundlePath }) =>
-    /^src-[A-Za-z0-9_-]+\.js$/u.test(path.basename(bundlePath)),
+  const companionRecords = relevant.filter(
+    ({ bundlePath }) => path.basename(bundlePath) !== "worker.js",
   );
   const exactPair = relevant.length === 2 &&
     workerRecords.length === 1 &&
-    srcRecords.length === 1;
+    companionRecords.length === 1;
   if (!exactPair) {
     return { targets: [], reason: currentContractReason(records, bundlePaths.length) };
   }
 
   const worker = workerRecords[0];
-  const src = srcRecords[0];
+  const companion = companionRecords[0];
   const pristine =
     hasPristineLocalContract(worker) &&
     hasPristineWorkerRouteContract(worker) &&
-    hasPristineLocalContract(src) &&
-    hasNoParcelRouteContract(src);
+    hasPristineLocalContract(companion) &&
+    hasNoParcelRouteContract(companion);
   const completed =
     hasCompletedLocalContract(worker) &&
     hasCompletedWorkerRouteContract(worker) &&
-    hasCompletedLocalContract(src) &&
-    hasNoParcelRouteContract(src);
+    hasCompletedLocalContract(companion) &&
+    hasNoParcelRouteContract(companion);
   if (!pristine && !completed) {
     return { targets: [], reason: currentContractReason(records, bundlePaths.length) };
   }
 
-  const targets = [src, worker].map((record) => ({
+  const targets = [companion, worker].map((record) => ({
     bundlePath: record.bundlePath,
     source: record.source,
     result: completed

@@ -201,6 +201,77 @@ function matchingSquareBracket(source, openingIndex) {
   return -1;
 }
 
+function stringLiteralEnd(source, openingIndex) {
+  const quote = source[openingIndex];
+  for (let index = openingIndex + 1; index < source.length; index += 1) {
+    const character = source[index];
+    if (character === "\\") {
+      index += 1;
+      continue;
+    }
+    if (character === quote) return index;
+    if (quote === "`" && character === "$" && source[index + 1] === "{") {
+      const closing = matchingCurlyBrace(source, index + 1);
+      if (closing < 0) return -1;
+      index = closing;
+    }
+  }
+  return -1;
+}
+
+function matchingCurlyBrace(source, openingIndex) {
+  let depth = 0;
+  for (let index = openingIndex; index < source.length; index += 1) {
+    const character = source[index];
+    if (character === "'" || character === '"' || character === "`") {
+      const closing = stringLiteralEnd(source, index);
+      if (closing < 0) return -1;
+      index = closing;
+      continue;
+    }
+    if (character === "{") depth += 1;
+    if (character === "}") {
+      depth -= 1;
+      if (depth === 0) return index;
+    }
+  }
+  return -1;
+}
+
+function returnsObjectLiteralAt(section, objectIndex) {
+  const preceding = section.slice(0, objectIndex).trimEnd();
+  return preceding.endsWith("return") || preceding.endsWith(",");
+}
+
+// Upstream both nests object returns inside the catalog normalizer and returns
+// the catalog through a comma expression, so no textual "return{" anchor is
+// stable. The catalog object is the literal that closes the function body;
+// wrapping anything else unbalances the bundle and blanks the renderer.
+function catalogReturnObjectIndex(section, closingIndex) {
+  if (closingIndex < 1) return -1;
+  for (let index = closingIndex - 2; index >= 0; index -= 1) {
+    if (section[index] !== "{") continue;
+    if (matchingCurlyBrace(section, index) !== closingIndex - 1) continue;
+    return returnsObjectLiteralAt(section, index) ? index : -1;
+  }
+  return -1;
+}
+
+function parsesStandalone(section) {
+  try {
+    new Function(section);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+// A patch that turns a parseable section into an unparseable one takes the
+// whole renderer down with a blank window, so fail closed instead.
+function keepsSectionParseable(original, patched) {
+  return !parsesStandalone(original) || parsesStandalone(patched);
+}
+
 function catalogPatchContract(source) {
   const markerCount = source.split(CATALOG_PATCH_MARKER).length - 1;
   const presetOptionsCount = source.split(CATALOG_PRESET_OPTIONS_KEY).length - 1;
@@ -214,7 +285,7 @@ function catalogPatchContract(source) {
     presetOptionsCount === 2 &&
     normalizer != null &&
     resolver != null &&
-    normalizer.source.includes(`return ${CATALOG_PATCH_MARKER}({`) &&
+    normalizer.source.includes(`${CATALOG_PATCH_MARKER}({`) &&
     resolver.source.includes(`?.${CATALOG_PRESET_OPTIONS_KEY}??[]`)
   ) {
     return "applied";
@@ -247,10 +318,9 @@ function applyCatalogPatch(source, context = {}) {
 
   const normalizer = catalogNormalizerSection(source);
   const resolver = catalogSelectionResolverSection(source);
-  const returnMarker = ";return{";
-  const returnIndex = normalizer.source.indexOf(returnMarker);
   const closingIndex = normalizer.source.lastIndexOf("}");
-  if (returnIndex < 0 || closingIndex <= returnIndex) {
+  const returnIndex = catalogReturnObjectIndex(normalizer.source, closingIndex);
+  if (returnIndex < 0) {
     warn(
       "Could not locate the ChatGPT model catalog return object",
       "model picker Default catalog patch",
@@ -273,8 +343,8 @@ function applyCatalogPatch(source, context = {}) {
 
   const patchedNormalizer =
     normalizer.source.slice(0, returnIndex) +
-    `;return ${CATALOG_PATCH_MARKER}({` +
-    normalizer.source.slice(returnIndex + returnMarker.length, closingIndex) +
+    ` ${CATALOG_PATCH_MARKER}(` +
+    normalizer.source.slice(returnIndex, closingIndex) +
     ",codexLinuxDefaultPresetsConfigured)" +
     normalizer.source.slice(closingIndex);
   const catalogParameter = resolverSignature[1];
@@ -282,6 +352,17 @@ function applyCatalogPatch(source, context = {}) {
     resolver.source.slice(0, resolverOptionsEnd) +
     `,...${catalogParameter}?.${CATALOG_PRESET_OPTIONS_KEY}??[]` +
     resolver.source.slice(resolverOptionsEnd);
+  if (
+    !keepsSectionParseable(normalizer.source, patchedNormalizer) ||
+    !keepsSectionParseable(resolver.source, patchedResolver)
+  ) {
+    warn(
+      "Patched ChatGPT model catalog section no longer parses",
+      "model picker Default catalog patch",
+    );
+    return source;
+  }
+
   const replacements = [
     { ...normalizer, source: patchedNormalizer },
     { ...resolver, source: patchedResolver },
@@ -606,6 +687,17 @@ function localComposerRuntime(config) {
 const LOCAL_COMPOSER_FALLBACK_PATTERN =
   /([A-Za-z_$][\w$]*)=([A-Za-z_$][\w$]*)\(([A-Za-z_$][\w$]*),([A-Za-z_$][\w$]*)==null\?void 0:`\$\{\4\.model\}:\$\{\4\.defaultReasoningEffort\}`\)/gu;
 
+function localComposerResetContext(section) {
+  const matches = [
+    ...(section?.source ?? "").matchAll(
+      /resetContextKey:JSON\.stringify\(\[([A-Za-z_$][\w$]*),([A-Za-z_$][\w$]*(?:\.hostId)?),([A-Za-z_$][\w$]*)\.cwd\]\)/gu,
+    ),
+  ];
+  if (matches.length !== 1) return null;
+  const [, conversation, hostId, cwdOwner] = matches[0];
+  return { conversation, cwdOwner, hostId };
+}
+
 function localComposerConfigContract(source) {
   const markerCount = source.split(LOCAL_COMPOSER_CONFIG_MARKER).length - 1;
   const draftMarkerCount = source.split(LOCAL_DRAFT_SELECTION_MARKER).length - 1;
@@ -618,14 +710,10 @@ function localComposerConfigContract(source) {
       section.source.match(
         /[A-Za-z_$][\w$]*\?\.selectModelAndReasoningEffort\?\?[A-Za-z_$][\w$]*/g,
       ) ?? [];
-    const resetContextMatches =
-      section.source.match(
-        /resetContextKey:JSON\.stringify\(\[[A-Za-z_$][\w$]*,[A-Za-z_$][\w$]*\.hostId,[A-Za-z_$][\w$]*\.cwd\]\)/g,
-      ) ?? [];
     return configMatches.length === 1 &&
       fallbackMatches.length === 2 &&
       selectionMatches.length === 1 &&
-      resetContextMatches.length === 1
+      localComposerResetContext(section) != null
       ? "current"
       : "drifted";
   }
@@ -824,16 +912,13 @@ function applyLocalComposerConfigPatch(source, context = {}) {
     /([A-Za-z_$][\w$]*)\?\.selectModelAndReasoningEffort\?\?([A-Za-z_$][\w$]*)/u.exec(
       section.source,
     );
-  const resetContextMatch =
-    /resetContextKey:JSON\.stringify\(\[([A-Za-z_$][\w$]*),([A-Za-z_$][\w$]*)\.hostId,\2\.cwd\]\)/u.exec(
-      section.source,
-    );
+  const resetContext = localComposerResetContext(section);
   const reactAlias = /\(0,([A-Za-z_$][\w$]*)\.useRef\)\(/u.exec(section.source)?.[1];
   if (
     configMatch == null ||
     fallbackMatches.length !== 2 ||
     selectionMatch == null ||
-    resetContextMatch == null ||
+    resetContext == null ||
     reactAlias == null
   ) {
     return source;
@@ -841,7 +926,11 @@ function applyLocalComposerConfigPatch(source, context = {}) {
   const configVariable = configMatch[1];
   const defaultSelectionsVariable = fallbackMatches[1][3];
   const [selectionExpression, draftSelectionVariable, baseSelectionVariable] = selectionMatch;
-  const [, conversationVariable, hostVariable] = resetContextMatch;
+  const {
+    conversation: conversationVariable,
+    cwdOwner: cwdOwnerExpression,
+    hostId: hostIdExpression,
+  } = resetContext;
   let patchedSection = section.source.replace(
     configMatch[0],
     `sliderModelsConfig:${configVariable}==null?${configVariable}:codexLinuxLocalDefaultPresetConfig`,
@@ -856,7 +945,7 @@ function applyLocalComposerConfigPatch(source, context = {}) {
   const [, selectHandlerVariable] = selectionDeclarationMatch;
   const draftRuntime =
     `;let codexLinuxLocalDraftDefaultRef=(0,${reactAlias}.useRef)(null),` +
-    `codexLinuxLocalDraftDefaultScope=${conversationVariable}==null?JSON.stringify([${hostVariable}.hostId,${hostVariable}.cwd]):null,` +
+    `codexLinuxLocalDraftDefaultScope=${conversationVariable}==null?JSON.stringify([${hostIdExpression},${cwdOwnerExpression}.cwd]):null,` +
     `codexLinuxLocalDraftDefaultSelection=${configVariable}==null?null:codexLinuxLocalDefaultPresetSelection(${defaultSelectionsVariable}),` +
     `codexLinuxLocalDraftSelect=(codexLinuxModel,codexLinuxEffort,codexLinuxCallback)=>(${draftSelectionVariable}?.selectModelAndReasoningEffort??${baseSelectionVariable})(codexLinuxModel,codexLinuxEffort,codexLinuxCallback,${configVariable}!=null&&${conversationVariable}==null&&codexLinuxLocalDefaultPresetIds.has(\`${"${codexLinuxModel}:${codexLinuxEffort}"}\`)?{persistAsDefault:!1}:void 0);` +
     `(0,${reactAlias}.useEffect)(()=>{if(codexLinuxLocalDraftDefaultScope==null){codexLinuxLocalDraftDefaultRef.current=null;return}codexLinuxLocalDraftDefaultSelection==null||codexLinuxLocalDraftDefaultRef.current===codexLinuxLocalDraftDefaultScope||(codexLinuxLocalDraftDefaultRef.current=codexLinuxLocalDraftDefaultScope,codexLinuxLocalDraftSelect(codexLinuxLocalDraftDefaultSelection.model,codexLinuxLocalDraftDefaultSelection.reasoningEffort,()=>{}))},[codexLinuxLocalDraftDefaultScope,codexLinuxLocalDraftDefaultSelection?.id]);` +

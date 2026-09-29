@@ -1,5 +1,7 @@
 "use strict";
 
+const { findMatchingBrace } = require("../../scripts/patches/lib/minified-js.js");
+
 const RECORD_REPLAY_PLUGIN_NAME = "record-and-replay";
 const HUD_RUNTIME_VERSION = 5;
 const RECORD_REPLAY_MODULE_EXPRESSIONS = Object.freeze({
@@ -262,12 +264,58 @@ function recordReplayActiveSpeechContextExpression(dispatchVar, transcriptVar) {
   return `(()=>{let t=String(${transcriptVar}??"").trim();if(t.length>0){let n="codex-linux-record-replay-global-dictation-"+Date.now()+"-"+Math.random().toString(36).slice(2);${dispatchVar}.dispatchMessage("fetch",{hostId:"local",requestId:n,method:"POST",url:"vscode://codex/linux-record-replay-speech-context-active",body:JSON.stringify({transcript:t,source:"codex-global-dictation"})})}})()`;
 }
 
-function recordReplayCompiledTranscriptPattern() {
+
+function recordReplayCurrentChatGptBlocks(source) {
   const id = String.raw`[A-Za-z_$][\w$]*`;
-  return new RegExp(
-    String.raw`(?<transcript>${id})\.length>0\?\((?<dispatch>(?<persistence>${id})==null\?(?<history>${id})\.getInstance\(\)\.dispatchMessage\(\`global-dictation-record-history-item\`,\{text:\k<transcript>\}\):\k<persistence>\.setTranscript\(\k<transcript>\),(?<analytics>${id})\.performance\.mark\(\`transcript_dispatched\`\),(?<action>${id}\.action)===\`send\`\?await (?<handlers>${id})\.onTranscriptSend\(\k<transcript>\):await \k<handlers>\.onTranscriptInsert\(\k<transcript>\))\):(?<cancel>${id}\.onTranscriptCancel\?\.\(\))`,
-    "",
+  const starts = source.matchAll(new RegExp(String.raw`if\((?<transcript>${id})\.length>0\|\|(?<handlers>${id})\.chatgpt!=null\)\{`, "g"));
+  const blocks = [];
+  for (const start of starts) {
+    const openBrace = start.index + start[0].length - 1;
+    const closeBrace = findMatchingBrace(source, openBrace);
+    if (closeBrace === -1) continue;
+    const text = source.slice(start.index, closeBrace + 1);
+    if (countOccurrences(text, "global-dictation-record-history-item") !== 1 ||
+        countOccurrences(text, "transcript_dispatched") !== 1) continue;
+    const actionMatches = [...text.matchAll(new RegExp(String.raw`else if\((?<actionContext>${id})\.action===\`send\`\)`, "g"))];
+    if (actionMatches.length !== 1) continue;
+    const capture = text.match(
+      new RegExp(String.raw`^if\([^{}]+\)\{(?<capture>\(globalThis\.codexLinuxRecordReplayCaptureTranscript\?\.\(\k<transcript>,(?<captureAction>${id})\.action\)[^;]+\);)?`.replace("\\k<transcript>", start.groups.transcript)),
+    );
+    blocks.push({
+      0: text,
+      index: start.index,
+      groups: {
+        transcript: start.groups.transcript,
+        actionContext: actionMatches[0].groups.actionContext,
+        capture: capture?.groups?.capture,
+        captureAction: capture?.groups?.captureAction,
+      },
+    });
+  }
+  return blocks;
+}
+
+function recordReplayDictationTranscriptState(source) {
+  const blocks = recordReplayCurrentChatGptBlocks(source);
+  const current = blocks.filter((match) => match.groups.capture == null);
+  const patched = blocks.filter((match) =>
+    match.groups.capture != null && match.groups.captureAction === match.groups.actionContext
   );
+  const captureMarkerCount = source.split("codexLinuxRecordReplayCaptureTranscript").length - 1;
+
+  if (current.length === 1 && patched.length === 0 && captureMarkerCount === 0) {
+    return { kind: "current", match: current[0] };
+  }
+  if (current.length === 0 && patched.length === 1 && captureMarkerCount === 1) {
+    return { kind: "patched", match: patched[0] };
+  }
+  if (current.length > 0 && patched.length > 0) {
+    return { kind: "mixed" };
+  }
+  if (current.length > 1 || patched.length > 1) {
+    return { kind: "ambiguous" };
+  }
+  return { kind: "partial" };
 }
 
 function applyRecordReplayHudPatch(currentSource) {
@@ -280,22 +328,24 @@ function applyRecordReplayHudPatch(currentSource) {
 
 function applyRecordReplayDictationTranscriptPatch(currentSource) {
   const patchName = "Record & Replay dictation transcript patch";
-  if (currentSource.includes("codexLinuxRecordReplayCaptureTranscript")) {
+  const state = recordReplayDictationTranscriptState(currentSource);
+  if (state.kind === "patched") {
     return currentSource;
   }
-  if (!currentSource.includes("global-dictation-record-history-item")) {
+  if (state.kind === "partial" &&
+      !currentSource.includes("global-dictation-record-history-item") &&
+      !currentSource.includes("codexLinuxRecordReplayCaptureTranscript")) {
     return currentSource;
   }
-
-  const compiledPattern = recordReplayCompiledTranscriptPattern();
-  if (compiledPattern.test(currentSource)) {
-    return currentSource.replace(
-      compiledPattern,
-      (...args) => {
-        const { transcript, action, dispatch, cancel } = args.at(-1);
-        return `${transcript}.length>0?(${recordReplayTranscriptCaptureExpression(transcript, action)},${dispatch}):${cancel}`;
-      },
-    );
+  if (state.kind === "current") {
+    const { transcript, actionContext } = state.match.groups;
+    const insertionIndex = state.match.index + state.match[0].indexOf("{") + 1;
+    const patched = currentSource.slice(0, insertionIndex) +
+      `${recordReplayTranscriptCaptureExpression(transcript, `${actionContext}.action`)};` +
+      currentSource.slice(insertionIndex);
+    return recordReplayDictationTranscriptState(patched).kind === "patched"
+      ? patched
+      : currentSource;
   }
 
   warn("Could not find dictation transcript send point", patchName);
@@ -303,13 +353,11 @@ function applyRecordReplayDictationTranscriptPatch(currentSource) {
 }
 
 function hasRecordReplayDictationTranscriptContract(source) {
-  if (typeof source !== "string" || !source.includes("global-dictation-record-history-item")) {
+  if (typeof source !== "string") {
     return false;
   }
-  if (source.includes("codexLinuxRecordReplayCaptureTranscript")) {
-    return true;
-  }
-  return recordReplayCompiledTranscriptPattern().test(source);
+  const state = recordReplayDictationTranscriptState(source);
+  return ["current", "patched"].includes(state.kind);
 }
 
 function recordReplayCompiledGlobalDictationPattern() {
