@@ -1,28 +1,28 @@
 /* Generated from upstream app css bundles — personal study only.
  * Concrete per-theme values resolved from the lightningcss light/dark
- * pattern and var() chains. 421 tokens.
+ * pattern and var() chains. 431 tokens.
  */
 :root {
-  --alpha-0: color-mix(in oklab, #1a1c1f 0%, transparent);
-  --alpha-01: color-mix(in oklab, #1a1c1f 1%, transparent);
-  --alpha-02: color-mix(in oklab, #1a1c1f 2%, transparent);
-  --alpha-04: color-mix(in oklab, #1a1c1f 4%, transparent);
-  --alpha-05: color-mix(in oklab, #1a1c1f 5%, transparent);
-  --alpha-06: color-mix(in oklab, #1a1c1f 6%, transparent);
-  --alpha-08: color-mix(in oklab, #1a1c1f 8%, transparent);
-  --alpha-10: color-mix(in oklab, #1a1c1f 10%, transparent);
-  --alpha-12: color-mix(in oklab, #1a1c1f 12%, transparent);
-  --alpha-15: color-mix(in oklab, #1a1c1f 15%, transparent);
-  --alpha-16: color-mix(in oklab, #1a1c1f 16%, transparent);
-  --alpha-20: color-mix(in oklab, #1a1c1f 20%, transparent);
-  --alpha-25: color-mix(in oklab, #1a1c1f 25%, transparent);
-  --alpha-30: color-mix(in oklab, #1a1c1f 30%, transparent);
-  --alpha-35: color-mix(in oklab, #1a1c1f 35%, transparent);
-  --alpha-40: color-mix(in oklab, #1a1c1f 40%, transparent);
-  --alpha-50: color-mix(in oklab, #1a1c1f 50%, transparent);
-  --alpha-60: color-mix(in oklab, #1a1c1f 60%, transparent);
-  --alpha-70: color-mix(in oklab, #1a1c1f 70%, transparent);
-  --alpha-base: #1a1c1f;
+  --alpha-0: color-mix(in oklab, var(--vscode-foreground) 0%, transparent);
+  --alpha-01: color-mix(in oklab, var(--vscode-foreground) 1%, transparent);
+  --alpha-02: color-mix(in oklab, var(--vscode-foreground) 2%, transparent);
+  --alpha-04: color-mix(in oklab, var(--vscode-foreground) 4%, transparent);
+  --alpha-05: color-mix(in oklab, var(--vscode-foreground) 5%, transparent);
+  --alpha-06: color-mix(in oklab, var(--vscode-foreground) 6%, transparent);
+  --alpha-08: color-mix(in oklab, var(--vscode-foreground) 8%, transparent);
+  --alpha-10: color-mix(in oklab, var(--vscode-foreground) 10%, transparent);
+  --alpha-12: color-mix(in oklab, var(--vscode-foreground) 12%, transparent);
+  --alpha-15: color-mix(in oklab, var(--vscode-foreground) 15%, transparent);
+  --alpha-16: color-mix(in oklab, var(--vscode-foreground) 16%, transparent);
+  --alpha-20: color-mix(in oklab, var(--vscode-foreground) 20%, transparent);
+  --alpha-25: color-mix(in oklab, var(--vscode-foreground) 25%, transparent);
+  --alpha-30: color-mix(in oklab, var(--vscode-foreground) 30%, transparent);
+  --alpha-35: color-mix(in oklab, var(--vscode-foreground) 35%, transparent);
+  --alpha-40: color-mix(in oklab, var(--vscode-foreground) 40%, transparent);
+  --alpha-50: color-mix(in oklab, var(--vscode-foreground) 50%, transparent);
+  --alpha-60: color-mix(in oklab, var(--vscode-foreground) 60%, transparent);
+  --alpha-70: color-mix(in oklab, var(--vscode-foreground) 70%, transparent);
+  --alpha-base: var(--vscode-foreground);
   --app-color-accent-blue: #339cff;
   --app-color-accent-green: #00a240;
   --app-color-accent-orange: #e25507;
@@ -54,7 +54,7 @@
   --app-color-background-status-error: #ffd9d9;
   --app-color-background-status-success: color-mix(in oklab, #00a240 7%, transparent);
   --app-color-background-status-warning: #ffe7d9;
-  --app-color-background-surface: color-mix(in oklab, #ededed 40%, transparent);
+  --app-color-background-surface: var(--vscode-editor-background);
   --app-color-background-surface-under: var(--vscode-sideBar-background);
   --app-color-background-tip-badge: #e8f3fe;
   --app-color-border: color-mix(in oklab, #1a1c1f 8%, transparent);
@@ -152,7 +152,7 @@
   --font-heading-xs-tracking: 0em;
   --font-heading-xs-weight: 600;
   --font-mono: inherit);
-  --font-mono-default: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-mono-default: ui-monospace, "SFMono-Regular", "SF Mono", menlo, consolas, "Liberation Mono", monospace;
   --font-openai-sans: "OpenAI Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-sans: inherit);
   --font-sans-default: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -318,6 +318,7 @@
   --radius-3xl-base: 1.25rem;
   --radius-4xl: calc(1.5rem * 1);
   --radius-4xl-base: 1.5rem;
+  --radius-button-action: calc(0.625rem * 1);
   --radius-button-toolbar: calc(0.625rem * 1);
   --radius-full: 9999px;
   --radius-lg: calc(0.625rem * 1);
@@ -369,6 +370,7 @@
   --shadow-alpha-200: 0.08;
   --shadow-alpha-300: 0.1;
   --shadow-alpha-400: 0.12;
+  --shadow-card: 0px 4px 16px 0px #0000000d;
   --shadow-color: 0 0 0;
   --shadow-hairline: 0 0 0 0.5px #0000001a;
   --shadow-hairline-color: #0000001a;
@@ -380,8 +382,16 @@
   --shadow-xl: 0px 8px 16px -4px #0000001f;
   --text-2xl: 36px;
   --text-2xl--line-height: calc(2 / 1.5);
+  --text-2xs: 0.625rem;
+  --text-2xs--font-weight: 400;
+  --text-2xs--letter-spacing: 0.025em;
+  --text-2xs--line-height: 0.875rem;
   --text-3xl: 48px;
   --text-3xl--line-height: calc(2.25 / 1.875);
+  --text-3xs: 0.5rem;
+  --text-3xs--font-weight: 400;
+  --text-3xs--letter-spacing: 0.025em;
+  --text-3xs--line-height: 0.75rem;
   --text-4xl: 72px;
   --text-4xl--line-height: calc(2.5 / 2.25);
   --text-5xl: 3rem;
@@ -390,7 +400,7 @@
   --text-5xl--line-height: 3rem;
   --text-base: 14px;
   --text-base--line-height: calc(1.5 / 1);
-  --text-document: 16px;
+  --text-document: 14px;
   --text-heading-app: 28px;
   --text-heading-lg: 24px;
   --text-heading-md: 16px;
@@ -427,26 +437,26 @@
 }
 
 [data-theme="dark"] {
-  --alpha-0: color-mix(in oklab, #dfdfdf 0%, transparent);
-  --alpha-01: color-mix(in oklab, #dfdfdf 1%, transparent);
-  --alpha-02: color-mix(in oklab, #dfdfdf 2%, transparent);
-  --alpha-04: color-mix(in oklab, #dfdfdf 4%, transparent);
-  --alpha-05: color-mix(in oklab, #dfdfdf 5%, transparent);
-  --alpha-06: color-mix(in oklab, #dfdfdf 6%, transparent);
-  --alpha-08: color-mix(in oklab, #dfdfdf 8%, transparent);
-  --alpha-10: color-mix(in oklab, #dfdfdf 10%, transparent);
-  --alpha-12: color-mix(in oklab, #dfdfdf 12%, transparent);
-  --alpha-15: color-mix(in oklab, #dfdfdf 15%, transparent);
-  --alpha-16: color-mix(in oklab, #dfdfdf 16%, transparent);
-  --alpha-20: color-mix(in oklab, #dfdfdf 20%, transparent);
-  --alpha-25: color-mix(in oklab, #dfdfdf 25%, transparent);
-  --alpha-30: color-mix(in oklab, #dfdfdf 30%, transparent);
-  --alpha-35: color-mix(in oklab, #dfdfdf 35%, transparent);
-  --alpha-40: color-mix(in oklab, #dfdfdf 40%, transparent);
-  --alpha-50: color-mix(in oklab, #dfdfdf 50%, transparent);
-  --alpha-60: color-mix(in oklab, #dfdfdf 60%, transparent);
-  --alpha-70: color-mix(in oklab, #dfdfdf 70%, transparent);
-  --alpha-base: #dfdfdf;
+  --alpha-0: color-mix(in oklab, var(--vscode-foreground) 0%, transparent);
+  --alpha-01: color-mix(in oklab, var(--vscode-foreground) 1%, transparent);
+  --alpha-02: color-mix(in oklab, var(--vscode-foreground) 2%, transparent);
+  --alpha-04: color-mix(in oklab, var(--vscode-foreground) 4%, transparent);
+  --alpha-05: color-mix(in oklab, var(--vscode-foreground) 5%, transparent);
+  --alpha-06: color-mix(in oklab, var(--vscode-foreground) 6%, transparent);
+  --alpha-08: color-mix(in oklab, var(--vscode-foreground) 8%, transparent);
+  --alpha-10: color-mix(in oklab, var(--vscode-foreground) 10%, transparent);
+  --alpha-12: color-mix(in oklab, var(--vscode-foreground) 12%, transparent);
+  --alpha-15: color-mix(in oklab, var(--vscode-foreground) 15%, transparent);
+  --alpha-16: color-mix(in oklab, var(--vscode-foreground) 16%, transparent);
+  --alpha-20: color-mix(in oklab, var(--vscode-foreground) 20%, transparent);
+  --alpha-25: color-mix(in oklab, var(--vscode-foreground) 25%, transparent);
+  --alpha-30: color-mix(in oklab, var(--vscode-foreground) 30%, transparent);
+  --alpha-35: color-mix(in oklab, var(--vscode-foreground) 35%, transparent);
+  --alpha-40: color-mix(in oklab, var(--vscode-foreground) 40%, transparent);
+  --alpha-50: color-mix(in oklab, var(--vscode-foreground) 50%, transparent);
+  --alpha-60: color-mix(in oklab, var(--vscode-foreground) 60%, transparent);
+  --alpha-70: color-mix(in oklab, var(--vscode-foreground) 70%, transparent);
+  --alpha-base: var(--vscode-foreground);
   --app-color-accent-blue: #339cff;
   --app-color-accent-green: #40c977;
   --app-color-accent-orange: #fb6a22;
@@ -478,7 +488,7 @@
   --app-color-background-status-error: #4d100e;
   --app-color-background-status-success: color-mix(in oklab, #04b84c 16%, transparent);
   --app-color-background-status-warning: #4a2206;
-  --app-color-background-surface: #212121;
+  --app-color-background-surface: var(--vscode-editor-background);
   --app-color-background-surface-under: var(--vscode-sideBar-background);
   --app-color-background-tip-badge: color-mix(in oklab, #339cff 16%, transparent);
   --app-color-border: color-mix(in oklab, #fff 8%, transparent);
@@ -576,7 +586,7 @@
   --font-heading-xs-tracking: 0em;
   --font-heading-xs-weight: 600;
   --font-mono: inherit);
-  --font-mono-default: ui-monospace, "SFMono-Regular", "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
+  --font-mono-default: ui-monospace, "SFMono-Regular", "SF Mono", menlo, consolas, "Liberation Mono", monospace;
   --font-openai-sans: "OpenAI Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --font-sans: inherit);
   --font-sans-default: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
@@ -742,6 +752,7 @@
   --radius-3xl-base: 1.25rem;
   --radius-4xl: calc(1.5rem * 1);
   --radius-4xl-base: 1.5rem;
+  --radius-button-action: calc(0.625rem * 1);
   --radius-button-toolbar: calc(0.625rem * 1);
   --radius-full: 9999px;
   --radius-lg: calc(0.625rem * 1);
@@ -793,6 +804,7 @@
   --shadow-alpha-200: 0.08;
   --shadow-alpha-300: 0.1;
   --shadow-alpha-400: 0.12;
+  --shadow-card: 0px 4px 16px 0px #0000000d;
   --shadow-color: 0 0 0;
   --shadow-hairline: 0 0 0 0.5px #0000001a;
   --shadow-hairline-color: #0000001a;
@@ -804,8 +816,16 @@
   --shadow-xl: 0px 8px 16px -4px #0000001f;
   --text-2xl: 36px;
   --text-2xl--line-height: calc(2 / 1.5);
+  --text-2xs: 0.625rem;
+  --text-2xs--font-weight: 400;
+  --text-2xs--letter-spacing: 0.025em;
+  --text-2xs--line-height: 0.875rem;
   --text-3xl: 48px;
   --text-3xl--line-height: calc(2.25 / 1.875);
+  --text-3xs: 0.5rem;
+  --text-3xs--font-weight: 400;
+  --text-3xs--letter-spacing: 0.025em;
+  --text-3xs--line-height: 0.75rem;
   --text-4xl: 72px;
   --text-4xl--line-height: calc(2.5 / 2.25);
   --text-5xl: 3rem;
@@ -814,7 +834,7 @@
   --text-5xl--line-height: 3rem;
   --text-base: 14px;
   --text-base--line-height: calc(1.5 / 1);
-  --text-document: 16px;
+  --text-document: 14px;
   --text-heading-app: 28px;
   --text-heading-lg: 24px;
   --text-heading-md: 16px;

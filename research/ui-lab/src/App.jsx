@@ -476,7 +476,7 @@ export default function App() {
       ) : (
         <main className="home">
           <p className="home-intro">
-            基于从上游 CSS 提取的 {421} 个设计令牌，用 React 复现的组件样式实验。
+            基于从上游 CSS 提取的 {431} 个设计令牌，用 React 复现的组件样式实验。
             点击卡片查看组件。仅用于个人学习研究。
           </p>
           <div className="card-grid">
